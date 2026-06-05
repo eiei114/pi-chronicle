@@ -1,24 +1,26 @@
 {
-  "name": "pi-extension-template",
-  "version": "0.1.2",
-  "description": "Template for building Pi packages with extensions, Agent Skills, prompts, and themes.",
+  "name": "pi-chronicle",
+  "version": "0.0.0",
+  "description": "Record conscious markers and typed beats during work sessions, then write chronicle markdown to your vault Progress folder.",
   "type": "module",
   "license": "MIT",
-  "author": "YOUR_NAME",
+  "author": "eiei114",
   "keywords": [
     "pi-package",
     "pi",
+    "chronicle",
+    "session-log",
     "agent-skill",
     "typescript"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OWNER/REPO.git"
+    "url": "git+https://github.com/eiei114/pi-chronicle.git"
   },
   "bugs": {
-    "url": "https://github.com/OWNER/REPO/issues"
+    "url": "https://github.com/eiei114/pi-chronicle/issues"
   },
-  "homepage": "https://github.com/OWNER/REPO#readme",
+  "homepage": "https://github.com/eiei114/pi-chronicle#readme",
   "files": [
     "extensions/",
     "lib/",

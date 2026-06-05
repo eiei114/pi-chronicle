@@ -1,49 +1,37 @@
 # Examples
 
-This template ships one minimal example for each Pi package resource type.
+## Quick session workflow
 
-## Extension
-
-`extensions/hello.ts` registers:
-
-- `/template-hello`
-- a small session status indicator
-
-Try it with:
-
-```bash
-pi -e .
+```text
+/chronicle:start   → enter "Pages bootstrap"
+/chronicle:mark    → enter "CI 緑"
+/chronicle:beat    → select "milestone" → enter "auto-release.yml 動作確認"
+/chronicle:beat    → select "blocker" → enter "npm provenance 設定不明"
+/chronicle:mark    → enter "Trusted Publishing 解決"
+/chronicle:end     → enter "初回リリース完了" → writes chronicle md
 ```
 
-Then run:
+## Output file
 
-```txt
-/template-hello YourName
+```markdown
+# Chronicle — Pages bootstrap
+started: 2026-06-05 14:30
+ended: 2026-06-05 16:15
+
+## Marks
+- 14:45 — CI 緑
+- 15:30 — Trusted Publishing 解決
+
+## Beats
+### 14:50 · milestone · auto-release.yml 動作確認
+### 15:00 · blocker · npm provenance 設定不明
+
+## Closing
+初回リリース完了
 ```
 
-## Agent Skill
+## Distill (v0.2.0)
 
-`skills/example-skill/SKILL.md` demonstrates a minimal Agent Skill.
-
-Replace it with your real workflow instructions.
-
-## Prompt template
-
-`prompts/example.md` demonstrates a tiny prompt template with one variable.
-
-## Theme
-
-`themes/example-theme.json` is a placeholder theme. Replace it or remove `themes/` if your package does not ship themes.
-
-## Typed custom tool
-
-`extensions/index.ts` registers:
-
-- `/template-info`
-- `template_greet` custom tool
-
-The tool demonstrates:
-
-- TypeBox object parameters
-- a string enum schema via `StringEnum`
-- shared logic imported from `lib/greeting.ts`
+```text
+/chronicle:distill → select "flow" → (coming in v0.2.0)
+```

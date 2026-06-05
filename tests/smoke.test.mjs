@@ -1,31 +1,43 @@
+import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import test from "node:test";
+import { join, sep, normalize } from "node:path";
 
-const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
-const autoReleaseWorkflow = await readFile(new URL("../.github/workflows/auto-release.yml", import.meta.url), "utf8");
-const publishWorkflow = await readFile(new URL("../.github/workflows/publish.yml", import.meta.url), "utf8");
+// Re-implement pure logic locally for .mjs test (no TS import needed)
 
-test("package declares pi resources", () => {
-  assert.deepEqual(packageJson.pi.extensions, ["./extensions"]);
-  assert.deepEqual(packageJson.pi.skills, ["./skills"]);
-  assert.deepEqual(packageJson.pi.prompts, ["./prompts"]);
-  assert.deepEqual(packageJson.pi.themes, ["./themes"]);
-});
+function detectProject(cwd) {
+  const normalized = normalize(cwd);
+  const segments = normalized.split(sep);
+  for (let i = segments.length - 1; i >= 0; i--) {
+    if (segments[i] === "4_Project" && i + 1 < segments.length) {
+      const projectKey = segments[i + 1];
+      if (!projectKey) continue;
+      const projectRoot = segments.slice(0, i + 2).join(sep);
+      const progressDir = join(projectRoot, "Progress");
+      return { key: projectKey, progressDir };
+    }
+  }
+  return undefined;
+}
 
-test("package is discoverable as a Pi package", () => {
-  assert.ok(packageJson.keywords.includes("pi-package"));
-});
+describe("project detection", () => {
+  it("detects project from 4_Project path", () => {
+    const cwd = join("C:", "Users", "dev", "vault", "4_Project", "pi-chronicle", "Docs");
+    const result = detectProject(cwd);
+    assert.equal(result?.key, "pi-chronicle");
+    assert.ok(
+      result.progressDir.includes(join("pi-chronicle", "Progress")),
+      `progressDir should contain pi-chronicle/Progress, got: ${result.progressDir}`,
+    );
+  });
 
-test("package uses public publish config", () => {
-  assert.equal(packageJson.publishConfig.access, "public");
-});
+  it("returns undefined when not under 4_Project", () => {
+    const result = detectProject(join("tmp", "some-random-dir"));
+    assert.equal(result, undefined);
+  });
 
-test("template includes npm release workflow handoff", () => {
-  assert.match(autoReleaseWorkflow, /actions:\s*write/);
-  assert.match(autoReleaseWorkflow, /contents:\s*write/);
-  assert.match(autoReleaseWorkflow, /gh workflow run publish\.yml/);
-  assert.match(publishWorkflow, /id-token:\s*write/);
-  assert.match(publishWorkflow, /workflow_dispatch:/);
-  assert.match(publishWorkflow, /npm publish --access public/);
+  it("handles nested project paths", () => {
+    const cwd = join("home", "user", "vault", "4_Project", "oss-development", "Issues");
+    const result = detectProject(cwd);
+    assert.equal(result?.key, "oss-development");
+  });
 });

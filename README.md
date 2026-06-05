@@ -1,88 +1,62 @@
-# PACKAGE_DISPLAY_NAME
+# Pi Chronicle
 
-[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
-[![Publish](https://github.com/OWNER/REPO/actions/workflows/publish.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/publish.yml)
-[![npm version](https://img.shields.io/npm/v/PACKAGE_NAME.svg)](https://www.npmjs.com/package/PACKAGE_NAME)
-[![npm downloads](https://img.shields.io/npm/dm/PACKAGE_NAME.svg)](https://www.npmjs.com/package/PACKAGE_NAME)
+[![CI](https://github.com/eiei114/pi-chronicle/actions/workflows/ci.yml/badge.svg)](https://github.com/eiei114/pi-chronicle/actions/workflows/ci.yml)
+[![Publish](https://github.com/eiei114/pi-chronicle/actions/workflows/publish.yml/badge.svg)](https://github.com/eiei114/pi-chronicle/actions/workflows/publish.yml)
+[![npm version](https://img.shields.io/npm/v/pi-chronicle.svg)](https://www.npmjs.com/package/pi-chronicle)
+[![npm downloads](https://img.shields.io/npm/dm/pi-chronicle.svg)](https://www.npmjs.com/package/pi-chronicle)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Pi package](https://img.shields.io/badge/pi-package-purple.svg)](https://pi.dev/packages)
 [![Trusted Publishing](https://img.shields.io/badge/npm-Trusted%20Publishing-blue.svg)](docs/release.md)
 
-> One-line pitch for this TypeScript-first Pi package.
+> Record conscious markers and typed beats during work sessions, then write chronicle markdown to your vault.
 
 ## What this is
 
-Briefly explain what this TypeScript-first package adds to Pi and who should use it.
+A Pi extension that captures **intentional session logs** — not automated transcripts. Mark decisions, blockers, milestones, tries, and reverts as you work, then finalize a single chronicle markdown file into your vault's `Progress/` folder.
+
+For developers and creators who want a lightweight record of *why* they did things in that order — raw material for flow docs, blog posts, or retrospectives.
 
 ## Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- **6 colon-flat commands** — no arguments, no flags; prompted after invocation
+- **5 beat types** — `decision`, `blocker`, `milestone`, `try`, `revert`
+- **Session-scoped** — starts with `/chronicle:start`, ends with `/chronicle:end`
+- **Vault output** — writes `chronicle-YYYYMMDD-HHmm.md` to your project's `Progress/` folder
+- **Distill select** — choose a target format (`flow`, `textbook`, `essay`, `fiction`) for future generation
 
 ## Install
 
-Install the published npm package with Pi:
-
 ```bash
-pi install npm:PACKAGE_NAME
+pi install npm:pi-chronicle
 ```
 
-Replace `PACKAGE_NAME` with the exact `name` from `package.json`.
-For a scoped npm package, keep the `npm:` prefix:
+Or try without permanent install:
 
 ```bash
-pi install npm:@your-scope/your-pi-package
-```
-
-Pin a specific version when you want reproducible installs:
-
-```bash
-pi install npm:PACKAGE_NAME@0.1.0
-```
-
-Install into the current project instead of your user Pi settings:
-
-```bash
-pi install npm:PACKAGE_NAME -l
-```
-
-Or install from GitHub:
-
-```bash
-pi install git:github.com/OWNER/REPO
-```
-
-Try it without permanently installing:
-
-```bash
-pi -e npm:PACKAGE_NAME
+pi -e npm:pi-chronicle
 ```
 
 ## Quick start
 
-Try this package locally:
-
-```bash
-pi -e .
-```
-
-Then run:
-
 ```txt
-/your-command
+/chronicle:start   → enter session name
+/chronicle:mark    → enter a short label
+/chronicle:beat    → pick type → enter label
+/chronicle:end     → optional closing note → writes chronicle md
+/chronicle:status  → show current session
+/chronicle:distill → pick output format
 ```
+
+No arguments needed. All input is collected via interactive prompts after command execution.
 
 ## Package contents
 
 | Path | Purpose |
 |---|---|
-| `extensions/` | Pi TypeScript extension entrypoints (`*.ts` and `index.ts`) |
-| `lib/` | Shared TypeScript helpers |
+| `extensions/` | Pi TypeScript extension entrypoints |
+| `lib/` | Shared session and output logic |
 | `skills/` | Agent Skills |
-| `prompts/` | Prompt templates |
-| `themes/` | Pi themes |
-| `docs/` | Optional supporting docs (usage, examples, release, ADRs) |
+| `docs/` | Optional supporting docs |
 
 ## Development
 
@@ -91,28 +65,9 @@ npm install
 npm run ci
 ```
 
-## Development flow
-
-Use this default flow when building a new Pi extension OSS project from this template:
-
-1. Create the Vault project notes under `4_Project/<ProjectName>/`.
-2. Add `CONTEXT.md`, `README.md`, `ROADMAP.md`, `Docs/`, `Issues/`, and `Progress/`.
-3. Write the PRD in `4_Project/<ProjectName>/Docs/`.
-4. Split approved tracer-bullet issues into `4_Project/<ProjectName>/Issues/`.
-5. Implement in the OSS repo.
-6. Run `npm run ci`, `npm test`, and `npm pack --dry-run`.
-7. Release with Trusted Publishing.
-8. Save release notes and follow-up decisions back to the Vault project.
-
-Short version:
-
-```txt
-Vault notes -> PRD -> Issues -> implement -> ci/check -> release -> save learnings
-```
-
 ## Release
 
-This package is set up for npm Trusted Publishing, so no `NPM_TOKEN` is required.
+npm Trusted Publishing — no `NPM_TOKEN` required.
 
 ```bash
 npm version patch
@@ -120,31 +75,6 @@ git push
 ```
 
 See [`docs/release.md`](docs/release.md) for setup details.
-
-## Docs
-
-`docs/` is optional supporting documentation, not a fixed six-file set. README stays the GitHub/npm entrypoint; add `docs/*.md` only when they help users or maintainers.
-
-After creating a repository from this template:
-
-1. Follow [`docs/template-checklist.md`](docs/template-checklist.md) for setup.
-2. Run the **post-generation docs cleanup** in that checklist: delete or merge template bootstrap docs that no longer add project value.
-
-Useful docs to keep when they add value:
-
-- [`docs/examples.md`](docs/examples.md) — examples for extensions, skills, prompts, and themes
-- [`docs/release.md`](docs/release.md) — Trusted Publishing details (README Release summarizes the flow)
-- `docs/usage.md` — create when usage does not fit in README
-
-Optional maintainer guidance (not a public-user navigation target in mature repos):
-
-- [`docs/template-checklist.md`](docs/template-checklist.md)
-
-Template bootstrap docs to delete or merge after setup unless they still teach something project-specific:
-
-- `docs/github-template.md`
-- `docs/repository-settings.md`
-- `docs/typescript.md`
 
 ## Security
 
@@ -154,10 +84,10 @@ For vulnerability reporting, see [`SECURITY.md`](SECURITY.md).
 
 ## Links
 
-- npm: https://www.npmjs.com/package/PACKAGE_NAME
-- GitHub: https://github.com/OWNER/REPO
-- Issues: https://github.com/OWNER/REPO/issues
+- npm: https://www.npmjs.com/package/pi-chronicle
+- GitHub: https://github.com/eiei114/pi-chronicle
+- Issues: https://github.com/eiei114/pi-chronicle/issues
 
 ## License
 
-MIT\n
+MIT
