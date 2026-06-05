@@ -18,10 +18,12 @@ For developers and creators who want a lightweight record of *why* they did thin
 
 ## Features
 
+- **Auto-start** — session begins when Pi loads; no explicit start command
 - **6 colon-flat commands** — no arguments, no flags; prompted after invocation
 - **5 beat types** — `decision`, `blocker`, `milestone`, `try`, `revert`
-- **Session-scoped** — starts with `/chronicle:start`, ends with `/chronicle:end`
+- **Project detection** — auto-resolves output folder from current working directory
 - **Vault output** — writes `chronicle-YYYYMMDD-HHmm.md` to your project's `Progress/` folder
+- **Novel generation** — `/chronicle:novel` generates a short novel from session marks/beats via Pi agent
 - **Distill select** — choose a target format (`flow`, `textbook`, `essay`, `fiction`) for future generation
 
 ## Install
@@ -39,15 +41,15 @@ pi -e npm:pi-chronicle
 ## Quick start
 
 ```txt
-/chronicle:start   → enter session name
 /chronicle:mark    → enter a short label
 /chronicle:beat    → pick type → enter label
 /chronicle:end     → optional closing note → writes chronicle md
 /chronicle:status  → show current session
 /chronicle:distill → pick output format
+/chronicle:novel   → generate novel from session → writes to project root
 ```
 
-No arguments needed. All input is collected via interactive prompts after command execution.
+Session auto-starts when Pi loads. No `/chronicle:start` needed — just mark and beat as you work.
 
 ## Package contents
 

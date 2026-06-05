@@ -5,53 +5,37 @@ import type {
 import type { ChronicleSession } from "../lib/session.ts";
 import { detectProject, resolveProject } from "../lib/project.ts";
 
-export function registerChronicleStartStatus(
+export function registerChronicleAutostart(
   pi: ExtensionAPI,
   getSession: () => ChronicleSession | undefined,
   setSession: (s: ChronicleSession | undefined) => void,
 ): void {
-  pi.registerCommand("chronicle:start", {
-    description: "Start a chronicle session",
-    handler: async (_args: string, ctx: ExtensionCommandContext) => {
-      if (getSession()) {
-        ctx.ui.notify(
-          "Session already active. Run /chronicle:end first.",
-          "warning",
-        );
-        return;
-      }
+  pi.on("session_start", (_event, ctx) => {
+    if (getSession()) return; // already active
 
-      // Resolve project from cwd
-      const detected = detectProject(ctx.cwd);
-      let projectKey: string | undefined;
+    const detected = detectProject(ctx.cwd);
+    const project = resolveProject(ctx.cwd, detected ? undefined : "scratch");
 
-      if (!detected) {
-        projectKey = await ctx.ui.input("Project name:");
-        if (projectKey === undefined || projectKey.trim() === "") return;
-        projectKey = projectKey.trim();
-      }
+    const now = new Date();
+    const name = formatDateShort(now);
 
-      const project = resolveProject(ctx.cwd, projectKey);
+    const session: ChronicleSession = {
+      name,
+      project,
+      startedAt: now,
+      marks: [],
+      beats: [],
+    };
 
-      const name = await ctx.ui.input("Session name:");
-      if (name === undefined || name.trim() === "") return;
-
-      const session: ChronicleSession = {
-        name: name.trim(),
-        project,
-        startedAt: new Date(),
-        marks: [],
-        beats: [],
-      };
-
-      setSession(session);
-      ctx.ui.notify(
-        `Chronicle started: "${session.name}" (${project.key})`,
-        "info",
-      );
-    },
+    setSession(session);
+    ctx.ui.setStatus("chronicle", `● ${project.key}`);
   });
+}
 
+export function registerChronicleStatus(
+  pi: ExtensionAPI,
+  getSession: () => ChronicleSession | undefined,
+): void {
   pi.registerCommand("chronicle:status", {
     description: "Show current chronicle session status",
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
@@ -75,6 +59,13 @@ export function registerChronicleStartStatus(
       );
     },
   });
+}
+
+function formatDateShort(date: Date): string {
+  const y = date.getFullYear();
+  const mo = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${mo}-${d}`;
 }
 
 export function formatTime(date: Date): string {
