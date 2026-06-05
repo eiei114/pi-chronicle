@@ -15,7 +15,7 @@ export function registerChronicleMark(
       const session = getSession();
       if (!session) {
         ctx.ui.notify(
-          "No active session. Run /chronicle:start first.",
+          "No active session. Sessions auto-start when Pi loads.",
           "warning",
         );
         return;

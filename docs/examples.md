@@ -2,8 +2,9 @@
 
 ## Quick session workflow
 
+Session auto-starts when Pi loads — no start command needed.
+
 ```text
-/chronicle:start   → enter "Pages bootstrap"
 /chronicle:mark    → enter "CI 緑"
 /chronicle:beat    → select "milestone" → enter "auto-release.yml 動作確認"
 /chronicle:beat    → select "blocker" → enter "npm provenance 設定不明"
@@ -14,7 +15,7 @@
 ## Output file
 
 ```markdown
-# Chronicle — Pages bootstrap
+# Chronicle — 2026-06-05
 started: 2026-06-05 14:30
 ended: 2026-06-05 16:15
 

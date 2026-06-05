@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning.
 
+## [0.1.1] - 2026-06-06
+
+### Changed
+
+- Remove stale `/chronicle:start` references from command notifications and examples
+- Align docs with auto-start session flow on Pi `session_start`
+
 ## [0.1.0] - 2026-06-05
 
 ### Added
