@@ -49,7 +49,7 @@ pi -e npm:pi-chronicle
 /chronicle:novel   → generate novel from session → writes to project root
 ```
 
-Session auto-starts when Pi loads. No `/chronicle:start` needed — just mark and beat as you work.
+Session auto-starts when Pi loads — just mark and beat as you work.
 
 ## Package contents
 
