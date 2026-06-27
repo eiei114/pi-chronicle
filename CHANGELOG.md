@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning.
 
+## [0.1.2] - 2026-06-27
+
+### Changed
+
+- Align README install guidance with the current Pi OSS template (npm, GitHub, project-local, and `pi -e .` paths)
+- Document `npm pack --dry-run` in Development and reflect actual shipped package contents
+- Remove unused `skills/`, `prompts/`, and `themes/` entries from `package.json`
+
 ## [0.1.1] - 2026-06-05
 
 ### Changed
