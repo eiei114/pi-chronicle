@@ -1,6 +1,6 @@
 {
   "name": "pi-chronicle",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Record conscious markers and typed beats during work sessions, then write chronicle markdown to your vault Progress folder.",
   "type": "module",
   "license": "MIT",
@@ -24,9 +24,6 @@
   "files": [
     "extensions/",
     "lib/",
-    "skills/",
-    "prompts/",
-    "themes/",
     "docs/",
     "README.md",
     "LICENSE",
@@ -41,15 +38,6 @@
   "pi": {
     "extensions": [
       "./extensions"
-    ],
-    "skills": [
-      "./skills"
-    ],
-    "prompts": [
-      "./prompts"
-    ],
-    "themes": [
-      "./themes"
     ]
   },
   "publishConfig": {

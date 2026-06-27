@@ -28,17 +28,45 @@ For developers and creators who want a lightweight record of *why* they did thin
 
 ## Install
 
+Install the published npm package with Pi:
+
 ```bash
 pi install npm:pi-chronicle
 ```
 
-Or try without permanent install:
+Pin a specific version when you want reproducible installs:
+
+```bash
+pi install npm:pi-chronicle@0.1.2
+```
+
+Install into the current project instead of your user Pi settings:
+
+```bash
+pi install npm:pi-chronicle -l
+```
+
+Or install from GitHub:
+
+```bash
+pi install git:github.com/eiei114/pi-chronicle
+```
+
+Try it without permanently installing:
 
 ```bash
 pi -e npm:pi-chronicle
 ```
 
 ## Quick start
+
+Try this package locally from a clone:
+
+```bash
+pi -e .
+```
+
+Then run:
 
 ```txt
 /chronicle:mark    → enter a short label
@@ -57,15 +85,17 @@ Session auto-starts when Pi loads — just mark and beat as you work.
 |---|---|
 | `extensions/` | Pi TypeScript extension entrypoints |
 | `lib/` | Shared session and output logic |
-| `skills/` | Agent Skills |
-| `docs/` | Optional supporting docs |
+| `docs/` | Supporting docs (`examples.md`, `release.md`, `template-checklist.md`) |
 
 ## Development
 
 ```bash
 npm install
 npm run ci
+npm pack --dry-run
 ```
+
+`npm run ci` runs typecheck, tests, and `npm run pack:check` (equivalent to `npm pack --dry-run`).
 
 ## Release
 
