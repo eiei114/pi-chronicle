@@ -43,11 +43,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
           package-manager-cache: false
-
-      - name: Ensure npm supports trusted publishing
-        run: npm install -g npm@latest
 
       - name: Install dependencies
         shell: bash
@@ -98,4 +94,4 @@ jobs:
 
       - name: Publish to npm
         if: steps.published.outputs.skip != 'true'
-        run: npm publish --access public
+        run: npm publish --provenance --access public
