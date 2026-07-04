@@ -19,10 +19,15 @@ npm version patch
 git push
 ```
 
-On `main`, `.github/workflows/auto-release.yml` checks `package.json` version. If `v<version>` does not exist yet, it creates the tag, creates the GitHub Release, then explicitly dispatches `.github/workflows/publish.yml` for that tag.
+On `main`, `.github/workflows/auto-release.yml` checks `package.json` version. If `v<version>` does not exist yet, it creates the tag, creates the GitHub Release, then explicitly dispatches `.github/workflows/publish.yml` for that tag. This `workflow_dispatch` handoff is the **authoritative** npm publish trigger for normal releases.
 
-The `v*.*.*` tag also triggers `.github/workflows/publish.yml`, which runs CI and publishes to npm when tags are pushed manually.
-Publishing also runs when a GitHub Release is published, and can be run manually from GitHub Actions with `workflow_dispatch`.
+`publish.yml` also runs when:
+
+- a `v*.*.*` tag is pushed manually (outside auto-release)
+- a GitHub Release is published
+- a maintainer triggers `workflow_dispatch` from GitHub Actions
+
+`publish.yml` does **not** run on ordinary `main` pushes. Non-release merges therefore do not create misleading red publish failures when `package.json` or lockfiles change without a version bump.
 
 The workflow skips `name@version` if that exact package version already exists on npm.
 
@@ -43,8 +48,8 @@ Important: tags or releases created by `GITHUB_TOKEN` do not reliably fan out in
 - `auto-release.yml` must call `gh workflow run publish.yml --ref "$TAG" -f ref="$TAG"`, or `publish.yml` must have an equivalent explicit handoff trigger such as `workflow_run`
 - GitHub-hosted runner
 - Node.js 24, so the release job uses a current npm CLI for Trusted Publishing
-- No `NPM_TOKEN`
-- `npm publish` from the configured workflow file
+- No `NPM_TOKEN` and no `registry-url` in `setup-node` (that would write a conflicting `.npmrc` and break OIDC Trusted Publishing)
+- `npm publish --provenance --access public` from the configured workflow file
 
 ## First release checklist
 
