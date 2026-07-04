@@ -60,3 +60,45 @@ Important: tags or releases created by `GITHUB_TOKEN` do not reliably fan out in
 - [ ] `npm pack --dry-run` contains only intended files
 - [ ] CHANGELOG.md has the release date
 
+## Registry drift recovery
+
+Use this when a GitHub Release exists but npm publish failed, or when npm `latest` lags `package.json` on `main`.
+
+### Verify current state
+
+```bash
+npm run release:sync-check
+
+# Manual spot checks
+npm view pi-chronicle version
+npm view pi-chronicle versions --json
+gh release list --repo eiei114/pi-chronicle --limit 10
+```
+
+`release:sync-check` fails when npm `latest` does not match `package.json`. It warns (without failing) when older GitHub releases are missing on npm but `latest` is correct — common after a failed intermediate publish that was later superseded.
+
+### Recover a missed publish for an existing tag
+
+1. Confirm Trusted Publishing is working (see DOT-493 root cause: no `registry-url` in `setup-node`).
+2. In GitHub Actions, run **Publish to npm** → `workflow_dispatch` with `ref` set to the tag (for example `v0.1.1`).
+3. If a **newer** version is already on npm `latest`, backfill with a non-`latest` dist-tag:
+
+```bash
+# Example: 0.1.2 is already latest; backfill 0.1.1 for semver completeness
+gh workflow run publish.yml --repo eiei114/pi-chronicle --ref v0.1.1 -f ref=v0.1.1
+# If the workflow does not support dist-tag yet, publish locally with OIDC/provenance
+# or add a dist_tag workflow_dispatch input before retrying.
+```
+
+npm rejects applying `latest` to an older version when a higher version is already published. That is expected — use `--tag=<name>` for historical backfill, or skip backfill when the newer release supersedes the gap.
+
+### pi-chronicle recovery log (2026-07)
+
+| Version | GitHub Release | npm | Notes |
+|---------|----------------|-----|-------|
+| 0.1.0   | yes            | yes | Initial manual publish |
+| 0.1.1   | yes            | no  | Publish failed (E404 / OIDC); superseded by 0.1.2 on `latest` |
+| 0.1.2   | yes            | yes | Repaired Trusted Publishing (PR #11, run 28681676539) |
+
+Current release line is reconciled: npm `latest` is `0.1.2`, matching `package.json` and the latest GitHub Release. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required.
+

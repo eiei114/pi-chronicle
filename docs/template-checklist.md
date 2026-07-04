@@ -116,6 +116,8 @@
 - [ ] `publish.yml` が `v*.*.*` タグ push に応答することを確認する（タグ駆動の公開パス）
 - [ ] `publish.yml` が通常の `main` push では起動しないことを確認する（非リリース merge で誤った赤失敗を出さない）
 - [ ] 初回リリースで npm provenance が付いているか確認する
+- [ ] `npm run release:sync-check` で npm `latest` と `package.json` が一致することを確認する
+- [ ] GitHub Release があるのに npm に無いバージョンがないか確認する（あれば `docs/release.md` の Registry drift recovery を参照）
 
 ### Workflow handoff guard
 
