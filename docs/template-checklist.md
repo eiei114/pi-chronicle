@@ -113,6 +113,7 @@
 - [ ] `NPM_TOKEN` を使っていないことを確認する
 - [ ] `auto-release.yml` が `main` の version bump から tag/release を作ることを確認する
 - [ ] `publish.yml` が `workflow_dispatch` と `release.published` に対応していることを確認する
+- [ ] `publish.yml` が `v*.*.*` タグ push に応答することを確認する（タグ駆動の公開パス）
 - [ ] `publish.yml` が通常の `main` push では起動しないことを確認する（非リリース merge で誤った赤失敗を出さない）
 - [ ] 初回リリースで npm provenance が付いているか確認する
 
