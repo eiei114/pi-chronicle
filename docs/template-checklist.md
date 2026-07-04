@@ -114,6 +114,8 @@
 - [ ] `auto-release.yml` が `main` の version bump から tag/release を作ることを確認する
 - [ ] `publish.yml` が `workflow_dispatch` と `release.published` に対応していることを確認する
 - [ ] 初回リリースで npm provenance が付いているか確認する
+- [ ] `npm run release:sync-check` で npm `latest` と `package.json` が一致することを確認する
+- [ ] GitHub Release があるのに npm に無いバージョンがないか確認する（あれば `docs/release.md` の Registry drift recovery を参照）
 
 ### Workflow handoff guard
 
