@@ -31,7 +31,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --import tsx --test tests/*.test.mjs",
     "ci": "npm run typecheck && npm test && npm run pack:check",
     "pack:check": "npm pack --dry-run",
     "release:sync-check": "node scripts/check-release-sync.mjs"
@@ -55,8 +55,9 @@
     "@earendil-works/pi-ai": "^0.80.6",
     "@earendil-works/pi-coding-agent": "^0.80.6",
     "@earendil-works/pi-tui": "latest",
-    "typebox": "latest",
     "@types/node": "^25.9.2",
+    "tsx": "^4.23.0",
+    "typebox": "latest",
     "typescript": "^6.0.3"
   }
 }
