@@ -92,13 +92,16 @@ gh workflow run publish.yml --repo eiei114/pi-chronicle --ref v0.1.1 -f ref=v0.1
 
 npm rejects applying `latest` to an older version when a higher version is already published. That is expected — use `--tag=<name>` for historical backfill, or skip backfill when the newer release supersedes the gap.
 
-### pi-chronicle recovery log (2026-07)
+### pi-chronicle recovery log
 
 | Version | GitHub Release | npm | Notes |
 |---------|----------------|-----|-------|
 | 0.1.0   | yes            | yes | Initial manual publish |
-| 0.1.1   | yes            | no  | Publish failed (E404 / OIDC); superseded by 0.1.2 on `latest` |
-| 0.1.2   | yes            | yes | Repaired Trusted Publishing (PR #11, run 28681676539) |
+| 0.1.1   | yes            | no  | Jun 6: OIDC `E404` (run [27048699054](https://github.com/eiei114/pi-chronicle/actions/runs/27048699054)); Jul 4 backfill: dist-tag / ordering rejection (run [28700780370](https://github.com/eiei114/pi-chronicle/actions/runs/28700780370)) |
+| 0.1.2   | yes            | yes | Repaired Trusted Publishing (PR #11, run [28681676539](https://github.com/eiei114/pi-chronicle/actions/runs/28681676539)) |
+| 0.1.3   | yes (latest)   | yes (`latest`) | Normal release (run [28704531012](https://github.com/eiei114/pi-chronicle/actions/runs/28704531012)) |
 
-Current release line is reconciled: npm `latest` is `0.1.2`, matching `package.json` and the latest GitHub Release. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required.
+Current release line is reconciled: npm `latest` is `0.1.3`, matching `package.json` and the latest GitHub Release. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
+
+Full investigation for run 28700780370: [docs/investigations/failed-npm-publish-run-2026-07-04.md](./investigations/failed-npm-publish-run-2026-07-04.md).
 
