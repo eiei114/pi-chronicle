@@ -52,7 +52,7 @@ npm error code E404   # version never published
 
 The publish step reached npm registry upload with OIDC working (tarball built, provenance path active). npm rejected the implicit `latest` dist-tag assignment:
 
-```
+```text
 npm error Cannot implicitly apply the "latest" tag because previously published version 0.1.2 is higher than the new version 0.1.1. You must specify a tag using --tag.
 ```
 
@@ -104,7 +104,10 @@ set -e
 if [ "$status" -eq 0 ]; then echo "skip=true (already published)"; \
 elif printf '%s' "$output" | grep -Eq 'E404|404 Not Found|404 No match'; then \
   echo "skip=false (would attempt publish)"; \
-else echo "unexpected: $output"; fi
+else
+  printf '%s\n' "$output" >&2
+  exit "$status"
+fi
 
 # 6. Semver guard: backfill would need a non-latest tag
 node --input-type=module -e "
