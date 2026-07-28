@@ -1,8 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { execSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, parse } from "node:path";
+import { join } from "node:path";
 import { detectProject, resolveProject } from "../lib/project.ts";
 
 function withTempDir(fn) {
@@ -14,9 +15,43 @@ function withTempDir(fn) {
   }
 }
 
-function outsideVaultPath(...segments) {
-  const root = process.platform === "win32" ? "Z:\\" : parse(tmpdir()).root;
-  return join(root, `pi-chronicle-no-vault-${process.pid}`, ...segments);
+function withOutsideVaultCwd(workspaceName, fn) {
+  if (process.platform === "win32") {
+    const root = mkdtempSync(join(tmpdir(), "pi-chronicle-outside-vault-"));
+    let drive;
+    try {
+      for (const letter of ["X", "Y", "Z", "W", "V", "U", "T"]) {
+        try {
+          execSync(`cmd /c subst ${letter}: "${root}"`, { stdio: "ignore" });
+          drive = letter;
+          break;
+        } catch {
+          // try next drive letter
+        }
+      }
+      if (!drive) {
+        throw new Error("Could not create isolated outside-vault fixture drive");
+      }
+      const cwd = join(`${drive}:\\`, "no-vault", `run-${process.pid}`, workspaceName);
+      mkdirSync(cwd, { recursive: true });
+      return fn(cwd);
+    } finally {
+      if (drive) {
+        try {
+          execSync(`cmd /c subst ${drive}: /d`, { stdio: "ignore" });
+        } catch {
+          // Best-effort cleanup for an isolated fixture drive.
+        }
+      }
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+
+  return withTempDir((root) => {
+    const cwd = join(root, "no-vault", `run-${process.pid}`, workspaceName);
+    mkdirSync(cwd, { recursive: true });
+    return fn(cwd);
+  });
 }
 
 describe("detectProject", () => {
@@ -52,20 +87,20 @@ describe("resolveProject", () => {
   });
 
   it("falls back to scratch and cwd/Progress when no project or vault root is found", () => {
-    const cwd = outsideVaultPath("scratch-workspace");
-
-    assert.deepEqual(resolveProject(cwd), {
-      key: "scratch",
-      progressDir: join(cwd, "Progress"),
+    withOutsideVaultCwd("scratch-workspace", (cwd) => {
+      assert.deepEqual(resolveProject(cwd), {
+        key: "scratch",
+        progressDir: join(cwd, "Progress"),
+      });
     });
   });
 
   it("uses a manual fallback key", () => {
-    const cwd = outsideVaultPath("manual-workspace");
-
-    assert.deepEqual(resolveProject(cwd, "maintenance"), {
-      key: "maintenance",
-      progressDir: join(cwd, "Progress"),
+    withOutsideVaultCwd("manual-workspace", (cwd) => {
+      assert.deepEqual(resolveProject(cwd, "maintenance"), {
+        key: "maintenance",
+        progressDir: join(cwd, "Progress"),
+      });
     });
   });
 
