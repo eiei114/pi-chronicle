@@ -48,7 +48,14 @@ function withOutsideVaultCwd(workspaceName, fn) {
   }
 
   return withTempDir((root) => {
-    const cwd = join(root, "no-vault", `run-${process.pid}`, workspaceName);
+    const isolation = Array.from({ length: 20 }, (_, i) => `isolation-${i}`);
+    const cwd = join(
+      root,
+      ...isolation,
+      "no-vault",
+      `run-${process.pid}`,
+      workspaceName,
+    );
     mkdirSync(cwd, { recursive: true });
     return fn(cwd);
   });
