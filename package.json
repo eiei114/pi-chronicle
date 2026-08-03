@@ -1,6 +1,6 @@
 {
   "name": "pi-chronicle",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Record conscious markers and typed beats during work sessions, then write chronicle markdown to your vault Progress folder.",
   "type": "module",
   "license": "MIT",
@@ -52,10 +52,10 @@
     "typebox": "*"
   },
   "devDependencies": {
-    "@earendil-works/pi-ai": "^0.80.6",
-    "@earendil-works/pi-coding-agent": "^0.80.6",
+    "@earendil-works/pi-ai": "^0.82.1",
+    "@earendil-works/pi-coding-agent": "^0.82.1",
     "@earendil-works/pi-tui": "latest",
-    "@types/node": "^25.9.2",
+    "@types/node": "^26.0.0",
     "tsx": "^4.23.0",
     "typebox": "latest",
     "typescript": "^6.0.3"
