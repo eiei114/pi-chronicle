@@ -99,9 +99,11 @@ npm rejects applying `latest` to an older version when a higher version is alrea
 | 0.1.0   | yes            | yes | Initial manual publish |
 | 0.1.1   | yes            | no  | Jun 6: OIDC `E404` (run [27048699054](https://github.com/eiei114/pi-chronicle/actions/runs/27048699054)); Jul 4 backfill: dist-tag / ordering rejection (run [28700780370](https://github.com/eiei114/pi-chronicle/actions/runs/28700780370)) |
 | 0.1.2   | yes            | yes | Repaired Trusted Publishing (PR #11, run [28681676539](https://github.com/eiei114/pi-chronicle/actions/runs/28681676539)) |
-| 0.1.3   | yes (latest)   | yes (`latest`) | Normal release (run [28704531012](https://github.com/eiei114/pi-chronicle/actions/runs/28704531012)) |
+| 0.1.3   | yes            | yes | Normal release (run [28704531012](https://github.com/eiei114/pi-chronicle/actions/runs/28704531012)) |
+| 0.1.4   | yes            | yes | Patch release (#20) |
+| 0.1.5   | yes (latest)   | yes (`latest`) | Discord badge + maintenance deps (#30) |
 
-Current release line is reconciled: npm `latest` is `0.1.3`, matching `package.json` and the latest GitHub Release. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
+Current release line is reconciled: npm `latest` is `0.1.5`, matching `package.json` and the latest GitHub Release. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
 
 Full investigation for run 28700780370: [docs/investigations/failed-npm-publish-run-2026-07-04.md](./investigations/failed-npm-publish-run-2026-07-04.md).
 
