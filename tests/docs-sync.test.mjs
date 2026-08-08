@@ -17,10 +17,14 @@ describe("docs sync", () => {
   });
 
   it("release doc current line matches package.json version", () => {
-    const currentLine = `npm \`latest\` is \`${pkg.version}\``;
+    const currentLine =
+      `Current release line is reconciled: npm \`latest\` is \`${pkg.version}\``;
     assert.match(
       releaseDoc,
-      new RegExp(currentLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+      new RegExp(
+        `^${currentLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+        "m",
+      ),
       `docs/release.md should document reconciled npm latest: ${currentLine}`,
     );
   });
