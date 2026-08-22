@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [0.1.6] - 2026-08-22
+
+### Changed
+
+- Merge the 2026-08-22 managed OSS dependency and maintenance PR batch.
+
 ### Changed
 
 - Bump package version to `0.1.4` for the next patch release.
@@ -41,4 +47,3 @@ This project follows semantic versioning.
 - Project auto-detection from `ctx.cwd` (walks up to find `4_Project/<project>/`)
 - Fallback to manual project name input when outside vault
 - Footer status indicator showing active project
-
