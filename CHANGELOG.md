@@ -1,5 +1,9 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+This project follows semantic versioning.
+
 ## Unreleased
 
 ## [0.1.6] - 2026-08-22
@@ -7,16 +11,41 @@
 ### Changed
 
 - Merge the 2026-08-22 managed OSS dependency and maintenance PR batch.
+- Extract `renderChronicle` for unit coverage.
+- Speed up CI dependency checks and consolidate Dependabot updates across ecosystems.
+- Sync release recovery documentation with npm `latest` `0.1.5`.
+
+## [0.1.5] - 2026-08-03
+
+### Added
+
+- Add dotfield.xyz Discord community badge to README.
 
 ### Changed
 
-- Bump package version to `0.1.4` for the next patch release.
+- Sync README pinned install example with `package.json` version.
+- Expand project resolution and outside-vault fixture test coverage.
+- Bump GitHub Actions `setup-node` to v7 and `@types/node` to 26.
 
-- Add Buy Me a Coffee sponsor button to README and native GitHub funding link via `.github/FUNDING.yml`.
+## [0.1.4] - 2026-07-20
 
-All notable changes to this project will be documented in this file.
+### Changed
 
-This project follows semantic versioning.
+- Bump `pi-coding-agent` and `pi-ai` peer dependencies to `^0.80.6`.
+- Import `detectProject` from `lib/project.ts` in smoke tests.
+- Document investigation of failed npm publish run 28700780370.
+
+## [0.1.3] - 2026-07-04
+
+### Fixed
+
+- Resolve npm publish `E404` by removing `registry-url` from `setup-node` (DOT-493).
+- Make auto-release `workflow_dispatch` the authoritative npm publish path (DOT-494).
+
+### Added
+
+- Add release sync guardrail script and registry drift recovery documentation (DOT-495).
+- Add Buy Me a Coffee sponsor button and GitHub funding link.
 
 ## [0.1.2] - 2026-06-27
 
