@@ -3,13 +3,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
+const publishedVersion = "0.1.6";
 const readme = readFileSync("README.md", "utf8");
 const releaseDoc = readFileSync("docs/release.md", "utf8");
 const changelog = readFileSync("CHANGELOG.md", "utf8");
 
 describe("docs sync", () => {
-  it("README pinned install example matches package.json version", () => {
-    const pinExample = `pi install npm:pi-chronicle@${pkg.version}`;
+  it("README pinned install example matches the latest published version", () => {
+    const pinExample = `pi install npm:pi-chronicle@${publishedVersion}`;
     assert.match(
       readme,
       new RegExp(pinExample.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
@@ -17,16 +18,16 @@ describe("docs sync", () => {
     );
   });
 
-  it("release doc current line matches package.json version", () => {
+  it("release doc current line matches the latest published version", () => {
     const currentLine =
-      `Current release line is reconciled: npm \`latest\` is \`${pkg.version}\``;
+      `Current published release line is \`${publishedVersion}\`: npm \`latest\` is \`${publishedVersion}\``;
     assert.match(
       releaseDoc,
       new RegExp(
         `^${currentLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
         "m",
       ),
-      `docs/release.md should document reconciled npm latest: ${currentLine}`,
+      `docs/release.md should document the latest published npm version: ${currentLine}`,
     );
   });
 

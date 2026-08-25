@@ -40,7 +40,7 @@ pi install npm:pi-chronicle
 Pin a specific version when you want reproducible installs:
 
 ```bash
-pi install npm:pi-chronicle@0.2.0
+pi install npm:pi-chronicle@0.1.6
 ```
 
 Install into the current project instead of your user Pi settings:
