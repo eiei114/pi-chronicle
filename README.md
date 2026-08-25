@@ -11,7 +11,7 @@
 [![Trusted Publishing](https://img.shields.io/badge/npm-Trusted%20Publishing-blue.svg)](docs/release.md)
 <a href="https://buymeacoffee.com/ekawano114m"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="217" height="60"></a>
 
-> Record conscious markers and typed beats during work sessions, then write chronicle markdown to your vault.
+> Record conscious markers and typed beats during work sessions, then write chronicle markdown or hand off follow-up artifact prompts from your vault context.
 
 ## What this is
 
@@ -26,8 +26,8 @@ For developers and creators who want a lightweight record of *why* they did thin
 - **5 beat types** — `decision`, `blocker`, `milestone`, `try`, `revert`
 - **Project detection** — auto-resolves output folder from current working directory
 - **Vault output** — writes `chronicle-YYYYMMDD-HHmm.md` to your project's `Progress/` folder
-- **Novel generation** — `/chronicle:novel` generates a short novel from session marks/beats via Pi agent
-- **Distill select** — choose a target format (`flow`, `textbook`, `essay`, `fiction`) for future generation
+- **Novel generation** — `/chronicle:novel` hands off a short-novel prompt from session marks/beats via Pi agent
+- **Distill handoff** — `/chronicle:distill` turns marks/beats into a follow-up Markdown artifact prompt for `flow`, `textbook`, `essay`, or `fiction`
 
 ## Install
 
@@ -76,11 +76,28 @@ Then run:
 /chronicle:beat    → pick type → enter label
 /chronicle:end     → optional closing note → writes chronicle md
 /chronicle:status  → show current session
-/chronicle:distill → pick output format
+/chronicle:distill → pick output format → hands off Progress/ artifact prompt
 /chronicle:novel   → generate novel from session → writes to project root
 ```
 
 Session auto-starts when Pi loads — just mark and beat as you work.
+
+## Distill follow-up artifacts
+
+`/chronicle:distill` does not call an LLM directly or synchronously write a file. It renders a bounded follow-up prompt from the active session and sends it through Pi, recommending an output file under the project's `Progress/` folder:
+
+```text
+Progress/chronicle-distill-<format>-YYYYMMDD-HHmm.md
+```
+
+Choose the format by use case:
+
+- `flow` — chronological work flow, decisions, blockers, reverts, milestones, and next action
+- `textbook` — learner-facing explanation with background, steps, cautions, and terms
+- `essay` — reflective prose about what changed, why, and what was learned
+- `fiction` — short narrative entrypoint aligned with `/chronicle:novel`, but reached from the format chooser
+
+The prompt includes the session name, project key, start time, mark/beat counts, and chronological mark/beat labels. No active session or an empty session produces a warning instead; cancelling the selector is a no-op.
 
 ## Package contents
 
