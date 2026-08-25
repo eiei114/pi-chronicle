@@ -6,6 +6,18 @@ This project follows semantic versioning.
 
 ## Unreleased
 
+## [0.2.0] - 2026-08-25
+
+### Added
+
+- Turn `/chronicle:distill` into a follow-up Markdown artifact handoff with `flow`, `textbook`, `essay`, and `fiction` prompt contracts.
+- Add focused command coverage for distill no-active-session, empty-session, cancel, and all format selection paths.
+
+### Changed
+
+- Share chronicle prompt rendering between `/chronicle:distill` and `/chronicle:novel` while preserving novel output naming and follow-up behavior.
+- Bump package version metadata to `0.2.0` for the distill follow-up feature.
+
 ## [0.1.6] - 2026-08-22
 
 ### Changed
