@@ -101,6 +101,7 @@ npm rejects applying `latest` to an older version when a higher version is alrea
 | 0.1.2   | yes            | yes | Repaired Trusted Publishing (PR #11, run [28681676539](https://github.com/eiei114/pi-chronicle/actions/runs/28681676539)) |
 | 0.1.3   | yes            | yes | Normal release (run [28704531012](https://github.com/eiei114/pi-chronicle/actions/runs/28704531012)) |
 | 0.1.4   | yes            | yes | Patch release (#20) |
+| 0.1.5   | yes            | yes | Discord badge, README pin sync, and test coverage batch |
 | 0.1.6   | yes (latest)   | yes (`latest`) | Managed OSS dependency and maintenance batch |
 
 Current release line is reconciled: npm `latest` is `0.1.6`, matching `package.json` and the latest GitHub Release. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
