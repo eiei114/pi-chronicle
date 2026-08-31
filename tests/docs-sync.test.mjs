@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
-const publishedVersion = "0.1.6";
+const publishedVersion = "0.2.0";
 const readme = readFileSync("README.md", "utf8");
 const releaseDoc = readFileSync("docs/release.md", "utf8");
 const changelog = readFileSync("CHANGELOG.md", "utf8");

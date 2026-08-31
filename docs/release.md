@@ -103,8 +103,8 @@ npm rejects applying `latest` to an older version when a higher version is alrea
 | 0.1.4   | yes            | yes | Patch release (#20) |
 | 0.1.5   | yes            | yes | Discord badge, README pin sync, and test coverage batch |
 | 0.1.6   | yes            | yes | Managed OSS dependency and maintenance batch |
-| 0.2.0   | yes (latest)   | no  | Distill follow-up prompt handoff (prepared, pending npm publish) |
+| 0.2.0   | yes (latest)   | yes | Distill follow-up prompt handoff |
 
-Current published release line is `0.1.6`: npm `latest` is `0.1.6`. Version `0.2.0` is prepared in this branch and will become the latest release after npm publish. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
+Current published release line is `0.2.0`: npm `latest` is `0.2.0`. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
 
 Full investigation for run 28700780370: [docs/investigations/failed-npm-publish-run-2026-07-04.md](./investigations/failed-npm-publish-run-2026-07-04.md).
