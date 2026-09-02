@@ -52,3 +52,15 @@ The follow-up prompt includes the session name, project key, start time, mark co
 ```
 
 A typical `flow` artifact can then summarize the work flow, decisions, blockers, reverts, milestones, and next action in Markdown.
+
+## Novel follow-up
+
+Use `/chronicle:novel` while a session still has marks or beats. Pi Chronicle renders a bounded follow-up prompt; the follow-up agent writes one short-novel Markdown file in the project root.
+
+```text
+/chronicle:mark    → enter "CI 緑"
+/chronicle:beat    → select "milestone" → enter "auto-release.yml 動作確認"
+/chronicle:novel   → sends a follow-up prompt for novel-20260605-1430.md in the project root
+```
+
+The follow-up prompt includes the session chronicle text rendered from marks and beats. No active session or an empty session (no marks or beats yet) produces a warning instead — sessions auto-start when Pi loads.
