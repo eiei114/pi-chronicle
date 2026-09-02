@@ -26,7 +26,7 @@ For developers and creators who want a lightweight record of *why* they did thin
 - **5 beat types** — `decision`, `blocker`, `milestone`, `try`, `revert`
 - **Project detection** — auto-resolves output folder from current working directory
 - **Vault output** — writes `chronicle-YYYYMMDD-HHmm.md` to your project's `Progress/` folder
-- **Novel generation** — `/chronicle:novel` hands off a short-novel prompt from session marks/beats via Pi agent
+- **Novel generation** — `/chronicle:novel` sends a follow-up prompt from session marks/beats; Pi writes `novel-YYYYMMDD-HHmm.md` to the project root
 - **Distill handoff** — `/chronicle:distill` turns marks/beats into a follow-up Markdown artifact prompt for `flow`, `textbook`, `essay`, or `fiction`
 
 ## Install
@@ -77,7 +77,7 @@ Then run:
 /chronicle:end     → optional closing note → writes chronicle md
 /chronicle:status  → show current session
 /chronicle:distill → pick output format → hands off Progress/ artifact prompt
-/chronicle:novel   → generate novel from session → writes to project root
+/chronicle:novel   → sends follow-up prompt → Pi writes novel-YYYYMMDD-HHmm.md to project root
 ```
 
 Session auto-starts when Pi loads — just mark and beat as you work.
@@ -98,6 +98,16 @@ Choose the format by use case:
 - `fiction` — short narrative entrypoint aligned with `/chronicle:novel`, but reached from the format chooser
 
 The prompt includes the session name, project key, start time, mark/beat counts, and chronological mark/beat labels. No active session or an empty session produces a warning instead; cancelling the selector is a no-op.
+
+## Novel follow-up
+
+`/chronicle:novel` does not call an LLM directly or synchronously write a file. It renders a bounded follow-up prompt from the active session and sends it through Pi, asking the follow-up agent to write one Markdown file in the project root:
+
+```text
+novel-YYYYMMDD-HHmm.md
+```
+
+The prompt includes the session chronicle text rendered from marks and beats. No active session or a session with no marks or beats yet produces a warning instead — sessions auto-start when Pi loads, so an empty session usually means you have not recorded any marks or beats yet.
 
 ## Package contents
 
