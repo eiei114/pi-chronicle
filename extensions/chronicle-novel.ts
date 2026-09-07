@@ -8,6 +8,10 @@ import {
   hasChronicleEntries,
   renderChronicleForPrompt,
 } from "../lib/prompt.ts";
+import {
+  EMPTY_SESSION_ENTRIES,
+  NO_ACTIVE_SESSION,
+} from "../lib/session-messages.ts";
 import { join } from "node:path";
 
 export function registerChronicleNovel(
@@ -19,18 +23,12 @@ export function registerChronicleNovel(
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       const session = getSession();
       if (!session) {
-        ctx.ui.notify(
-          "No active session. Sessions auto-start when Pi loads.",
-          "warning",
-        );
+        ctx.ui.notify(NO_ACTIVE_SESSION, "warning");
         return;
       }
 
       if (!hasChronicleEntries(session)) {
-        ctx.ui.notify(
-          "Session has no marks or beats yet. Add some first.",
-          "warning",
-        );
+        ctx.ui.notify(EMPTY_SESSION_ENTRIES, "warning");
         return;
       }
 

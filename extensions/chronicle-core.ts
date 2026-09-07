@@ -4,6 +4,11 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
 import { detectProject, resolveProject } from "../lib/project.ts";
+import { hasChronicleEntries } from "../lib/prompt.ts";
+import {
+  EMPTY_SESSION_ENTRIES,
+  NO_ACTIVE_SESSION,
+} from "../lib/session-messages.ts";
 
 export function registerChronicleAutostart(
   pi: ExtensionAPI,
@@ -41,22 +46,25 @@ export function registerChronicleStatus(
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       const session = getSession();
       if (!session) {
-        ctx.ui.notify("No active session.", "info");
+        ctx.ui.notify(NO_ACTIVE_SESSION, "info");
         return;
       }
 
       const started = formatTime(session.startedAt);
       const elapsed = formatElapsed(session.startedAt);
-      ctx.ui.notify(
-        [
-          `Session: ${session.name}`,
-          `Project: ${session.project.key}`,
-          `Started: ${started} (${elapsed})`,
-          `Marks: ${session.marks.length}`,
-          `Beats: ${session.beats.length}`,
-        ].join("\n"),
-        "info",
-      );
+      const lines = [
+        `Session: ${session.name}`,
+        `Project: ${session.project.key}`,
+        `Started: ${started} (${elapsed})`,
+        `Marks: ${session.marks.length}`,
+        `Beats: ${session.beats.length}`,
+      ];
+
+      if (!hasChronicleEntries(session)) {
+        lines.push("", EMPTY_SESSION_ENTRIES);
+      }
+
+      ctx.ui.notify(lines.join("\n"), "info");
     },
   });
 }
