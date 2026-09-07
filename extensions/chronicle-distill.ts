@@ -5,6 +5,10 @@ import type {
 import type { ChronicleSession, DistillType } from "../lib/session.ts";
 import { DISTILL_TYPES } from "../lib/session.ts";
 import { hasChronicleEntries, renderDistillPrompt } from "../lib/prompt.ts";
+import {
+  EMPTY_SESSION_ENTRIES,
+  NO_ACTIVE_SESSION_DISTILL,
+} from "../lib/session-messages.ts";
 
 export function registerChronicleDistill(
   pi: ExtensionAPI,
@@ -15,18 +19,12 @@ export function registerChronicleDistill(
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       const session = getSession();
       if (!session) {
-        ctx.ui.notify(
-          "No active session to distill.",
-          "warning",
-        );
+        ctx.ui.notify(NO_ACTIVE_SESSION_DISTILL, "warning");
         return;
       }
 
       if (!hasChronicleEntries(session)) {
-        ctx.ui.notify(
-          "Session has no marks or beats yet. Add some first.",
-          "warning",
-        );
+        ctx.ui.notify(EMPTY_SESSION_ENTRIES, "warning");
         return;
       }
 

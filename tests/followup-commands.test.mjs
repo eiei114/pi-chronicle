@@ -7,6 +7,11 @@ import {
   DISTILL_FORMAT_CONTRACTS,
   formatFilenameTs,
 } from "../lib/prompt.ts";
+import {
+  EMPTY_SESSION_ENTRIES,
+  NO_ACTIVE_SESSION,
+  NO_ACTIVE_SESSION_DISTILL,
+} from "../lib/session-messages.ts";
 
 const DISTILL_FORMATS = ["flow", "textbook", "essay", "fiction"];
 
@@ -86,7 +91,7 @@ describe("chronicle:distill", () => {
     await getCommand(commands, "chronicle:distill").handler("", context.ctx);
 
     assert.deepEqual(context.notifications, [
-      { message: "No active session to distill.", level: "warning" },
+      { message: NO_ACTIVE_SESSION_DISTILL, level: "warning" },
     ]);
     assert.equal(context.selectCalls, 0);
     assert.equal(sentMessages.length, 0);
@@ -100,7 +105,7 @@ describe("chronicle:distill", () => {
     await getCommand(commands, "chronicle:distill").handler("", context.ctx);
 
     assert.deepEqual(context.notifications, [
-      { message: "Session has no marks or beats yet. Add some first.", level: "warning" },
+      { message: EMPTY_SESSION_ENTRIES, level: "warning" },
     ]);
     assert.equal(context.selectCalls, 0);
     assert.equal(sentMessages.length, 0);
@@ -153,6 +158,19 @@ describe("chronicle:distill", () => {
 });
 
 describe("chronicle:novel", () => {
+  it("keeps the no-active-session warning path and does not send a follow-up", async () => {
+    const { commands, sentMessages, pi } = createPiHarness();
+    registerChronicleNovel(pi, () => undefined);
+    const context = createContext();
+
+    await getCommand(commands, "chronicle:novel").handler("", context.ctx);
+
+    assert.deepEqual(context.notifications, [
+      { message: NO_ACTIVE_SESSION, level: "warning" },
+    ]);
+    assert.equal(sentMessages.length, 0);
+  });
+
   it("still sends a follow-up to write novel-YYYYMMDD-HHmm.md under the project root", async () => {
     const session = makeSession();
     const { commands, sentMessages, pi } = createPiHarness();
@@ -183,7 +201,7 @@ describe("chronicle:novel", () => {
 
     assert.equal(sentMessages.length, 0);
     assert.deepEqual(context.notifications, [
-      { message: "Session has no marks or beats yet. Add some first.", level: "warning" },
+      { message: EMPTY_SESSION_ENTRIES, level: "warning" },
     ]);
   });
 });
