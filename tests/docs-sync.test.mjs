@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const publishedVersion = "0.2.0";
 const readme = readFileSync("README.md", "utf8");
+const examplesDoc = readFileSync("docs/examples.md", "utf8");
 const releaseDoc = readFileSync("docs/release.md", "utf8");
 const changelog = readFileSync("CHANGELOG.md", "utf8");
 
@@ -55,6 +56,18 @@ describe("docs sync", () => {
     assert.ok(
       changedHeadings <= 1,
       `CHANGELOG ${pkg.version} should have at most one ### Changed heading (found ${changedHeadings})`,
+    );
+  });
+
+  it("examples doc documents detected, vault, and outside-vault output locations", () => {
+    assert.match(examplesDoc, /## Project output locations/);
+    assert.match(examplesDoc, /4_Project\/<key>/);
+    assert.match(examplesDoc, /● scratch/);
+    assert.match(examplesDoc, /<cwd>\/Progress\/chronicle-YYYYMMDD-HHmm\.md/);
+    assert.match(
+      readme,
+      /docs\/examples\.md#project-output-locations/,
+      "README should link to the project output locations example",
     );
   });
 

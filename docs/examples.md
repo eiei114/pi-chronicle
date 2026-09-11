@@ -64,3 +64,20 @@ Use `/chronicle:novel` while a session still has marks or beats. Pi Chronicle re
 ```
 
 The follow-up prompt includes the session chronicle text rendered from marks and beats. No active session or an empty session (no marks or beats yet) produces a warning instead — sessions auto-start when Pi loads.
+
+## Project output locations
+
+Sessions auto-start when Pi loads. Pi Chronicle resolves the output project from Pi's current working directory (`ctx.cwd`) and shows the active project key in the footer status (`● <key>`). Use `/chronicle:status` to confirm the resolved project and `Progress/` path before ending a session.
+
+| Situation | Project key | Chronicle output (`/chronicle:end`) |
+|---|---|---|
+| cwd is under `4_Project/<key>/...` | detected `<key>` | `<vault>/4_Project/<key>/Progress/chronicle-YYYYMMDD-HHmm.md` |
+| cwd is inside a vault (`.pi/` or `.obsidian/` ancestor) but not under `4_Project` | `scratch` | `<vault>/4_Project/scratch/Progress/chronicle-YYYYMMDD-HHmm.md` |
+| cwd is outside any vault | `scratch` | `<cwd>/Progress/chronicle-YYYYMMDD-HHmm.md` |
+
+Example: clone this repo and run `pi -e .` from the repository root (outside a vault layout). The footer shows `● scratch`, and `/chronicle:end` writes to `./Progress/chronicle-YYYYMMDD-HHmm.md` relative to that cwd.
+
+Distill and novel follow-ups reuse the same resolved project:
+
+- `/chronicle:distill` recommends `Progress/chronicle-distill-<format>-YYYYMMDD-HHmm.md` under the resolved project.
+- `/chronicle:novel` recommends `novel-YYYYMMDD-HHmm.md` in the project root (the parent directory of `Progress/`).
