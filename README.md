@@ -82,6 +82,8 @@ Then run:
 
 Session auto-starts when Pi loads — just mark and beat as you work.
 
+Project detection and outside-vault fallback paths are documented in [`docs/examples.md`](docs/examples.md#project-output-locations).
+
 ## Distill follow-up artifacts
 
 `/chronicle:distill` does not call an LLM directly or synchronously write a file. It renders a bounded follow-up prompt from the active session and sends it through Pi, recommending an output file under the project's `Progress/` folder:
