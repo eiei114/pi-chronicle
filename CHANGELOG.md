@@ -6,6 +6,14 @@ This project follows semantic versioning.
 
 ## Unreleased
 
+## [0.3.0] - 2026-09-13
+
+### Added
+
+- Add `/chronicle:export` to write a mid-session chronicle snapshot without ending the active session.
+- Add shared chronicle output helpers and document export vs end overwrite rules in `docs/chronicle-format.md`.
+- Add export command tests for happy path, missing session, and overwrite refusal.
+
 ## [0.2.0] - 2026-08-25
 
 ### Added

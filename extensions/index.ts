@@ -8,6 +8,7 @@ import {
 import { registerChronicleMark } from "./chronicle-mark.ts";
 import { registerChronicleBeat } from "./chronicle-beat.ts";
 import { registerChronicleEnd } from "./chronicle-end.ts";
+import { registerChronicleExport } from "./chronicle-export.ts";
 import { registerChronicleDistill } from "./chronicle-distill.ts";
 import { registerChronicleNovel } from "./chronicle-novel.ts";
 
@@ -27,6 +28,7 @@ export default function (pi: ExtensionAPI): void {
   registerChronicleMark(pi, getSession);
   registerChronicleBeat(pi, getSession);
   registerChronicleEnd(pi, getSession, setSession);
+  registerChronicleExport(pi, getSession);
   registerChronicleDistill(pi, getSession);
   registerChronicleNovel(pi, getSession);
 }

@@ -22,7 +22,7 @@ For developers and creators who want a lightweight record of *why* they did thin
 ## Features
 
 - **Auto-start** — session begins when Pi loads; no explicit start command
-- **6 colon-flat commands** — no arguments, no flags; prompted after invocation
+- **7 colon-flat commands** — no arguments, no flags; prompted after invocation
 - **5 beat types** — `decision`, `blocker`, `milestone`, `try`, `revert`
 - **Project detection** — auto-resolves output folder from current working directory
 - **Vault output** — writes `chronicle-YYYYMMDD-HHmm.md` to your project's `Progress/` folder
@@ -74,6 +74,7 @@ Then run:
 ```txt
 /chronicle:mark    → enter a short label
 /chronicle:beat    → pick type → enter label
+/chronicle:export  → writes a mid-session snapshot without ending
 /chronicle:end     → optional closing note → writes chronicle md
 /chronicle:status  → show current session
 /chronicle:distill → pick output format → hands off Progress/ artifact prompt
@@ -83,6 +84,12 @@ Then run:
 Session auto-starts when Pi loads — just mark and beat as you work.
 
 Project detection and outside-vault fallback paths are documented in [`docs/examples.md`](docs/examples.md#project-output-locations).
+
+## Export snapshot
+
+`/chronicle:export` writes the current session to `Progress/chronicle-YYYYMMDD-HHmm.md` without ending the session. It uses the same markdown format as `/chronicle:end`, but refuses to overwrite an existing file (fail closed). Use export for mid-session checkpoints; use end to finalize with an optional closing note and overwrite the same deterministic filename.
+
+See [`docs/chronicle-format.md`](docs/chronicle-format.md) for format details and overwrite rules.
 
 ## Distill follow-up artifacts
 
