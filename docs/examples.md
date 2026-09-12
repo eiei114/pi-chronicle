@@ -9,8 +9,29 @@ Session auto-starts when Pi loads — no start command needed.
 /chronicle:beat    → select "milestone" → enter "auto-release.yml 動作確認"
 /chronicle:beat    → select "blocker" → enter "npm provenance 設定不明"
 /chronicle:mark    → enter "Trusted Publishing 解決"
+/chronicle:export  → writes a mid-session snapshot without closing
 /chronicle:end     → enter "初回リリース完了" → writes chronicle md
 ```
+
+## Export snapshot (mid-session checkpoint)
+
+Use `/chronicle:export` to checkpoint the current session without ending it. The snapshot uses the same `Progress/chronicle-YYYYMMDD-HHmm.md` naming as `/chronicle:end`, but export refuses to overwrite an existing file and leaves the session active.
+
+```text
+/chronicle:mark    → enter "CI 緑"
+/chronicle:beat    → select "milestone" → enter "auto-release.yml 動作確認"
+/chronicle:export  → writes Progress/chronicle-20260605-1430.md (session continues)
+/chronicle:mark    → enter "Trusted Publishing 解決"
+/chronicle:end     → enter "初回リリース完了" → overwrites the same file and ends session
+```
+
+Vault example path:
+
+```text
+vault/4_Project/pi-chronicle/Progress/chronicle-20260605-1430.md
+```
+
+See [`chronicle-format.md`](chronicle-format.md) for export vs end overwrite rules.
 
 ## Output file
 
