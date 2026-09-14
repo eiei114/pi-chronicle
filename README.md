@@ -87,7 +87,7 @@ Project detection and outside-vault fallback paths are documented in [`docs/exam
 
 ## Export snapshot
 
-`/chronicle:export` writes the current session to `Progress/chronicle-YYYYMMDD-HHmm.md` without ending the session. It uses the same markdown format as `/chronicle:end`, but refuses to overwrite an existing file (fail closed). Use export for mid-session checkpoints; use end to finalize with an optional closing note and overwrite the same deterministic filename.
+`/chronicle:export` writes the current session to `Progress/chronicle-YYYYMMDD-HHmm.md` without ending the session. It uses the same markdown format as `/chronicle:end`, but refuses to overwrite an existing file (fail closed) and warns when the session has no marks or beats yet. Use export for mid-session checkpoints; use end to finalize with an optional closing note and overwrite the same deterministic filename. The snapshot's `ended:` timestamp is the write time, not session finish.
 
 See [`docs/chronicle-format.md`](docs/chronicle-format.md) for format details and overwrite rules.
 

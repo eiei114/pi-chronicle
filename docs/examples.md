@@ -33,6 +33,8 @@ vault/4_Project/pi-chronicle/Progress/chronicle-20260605-1430.md
 
 See [`chronicle-format.md`](chronicle-format.md) for export vs end overwrite rules.
 
+The export snapshot's `ended:` line is the checkpoint write time, not a session finish. The session stays active until `/chronicle:end`.
+
 ## Output file
 
 ```markdown
