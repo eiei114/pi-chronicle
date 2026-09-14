@@ -6,6 +6,11 @@ This project follows semantic versioning.
 
 ## Unreleased
 
+### Changed
+
+- Dogfood review for `/chronicle:export`: warn on empty sessions, clarify snapshot `ended:` semantics and export→end workflow in docs, and improve re-export guidance.
+- Add dogfood fixture coverage, `writeChronicleSnapshot` unit tests, and `/chronicle:end` command tests.
+
 ## [0.3.0] - 2026-09-13
 
 ### Added

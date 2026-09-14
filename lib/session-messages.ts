@@ -14,5 +14,5 @@ export function SNAPSHOT_SAVED(filePath: string): string {
 }
 
 export function SNAPSHOT_ALREADY_EXISTS(filePath: string): string {
-  return `Chronicle file already exists: ${filePath}. Use /chronicle:end to overwrite and close the session.`;
+  return `Chronicle file already exists: ${filePath}. Add more marks or beats, then use /chronicle:end to overwrite with the final version and close the session.`;
 }

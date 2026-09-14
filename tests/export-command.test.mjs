@@ -10,12 +10,16 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { registerChronicleExport } from "../extensions/chronicle-export.ts";
 import {
+  EMPTY_SESSION_ENTRIES,
   NO_ACTIVE_SESSION,
   SNAPSHOT_ALREADY_EXISTS,
   SNAPSHOT_SAVED,
 } from "../lib/session-messages.ts";
 import { renderChronicle } from "../lib/render-chronicle.ts";
-import { chronicleFilePath } from "../lib/chronicle-output.ts";
+import {
+  chronicleFilePath,
+  writeChronicleSnapshot,
+} from "../lib/chronicle-output.ts";
 
 function makeSession(progressDir, overrides = {}) {
   return {
@@ -88,6 +92,21 @@ describe("chronicle:export", () => {
     assert.equal(activeSession, session, "export should keep the session active");
   });
 
+  it("warns when the active session has no marks or beats yet", async () => {
+    const progressDir = mkdtempSync(join(tmpdir(), "pi-chronicle-export-"));
+    const session = makeSession(progressDir, { marks: [], beats: [] });
+    const { commands, pi } = createPiHarness();
+    registerChronicleExport(pi, () => session);
+    const context = createContext();
+
+    await getCommand(commands, "chronicle:export").handler("", context.ctx);
+
+    assert.deepEqual(context.notifications, [
+      { message: EMPTY_SESSION_ENTRIES, level: "warning" },
+    ]);
+    assert.ok(!existsSync(chronicleFilePath(session)));
+  });
+
   it("fails closed when no active session exists", async () => {
     const { commands, pi } = createPiHarness();
     registerChronicleExport(pi, () => undefined);
@@ -123,14 +142,38 @@ describe("chronicle:export", () => {
   });
 });
 
-describe("writeChronicleSnapshot overwrite behavior via export/end contract", () => {
-  it("export snapshot content matches renderChronicle without closing note", () => {
+describe("dogfood export checkpoint fixture", () => {
+  it("matches vault-ready markdown for a mid-session checkpoint", () => {
     const progressDir = mkdtempSync(join(tmpdir(), "pi-chronicle-export-"));
-    const session = makeSession(progressDir);
-    const endedAt = new Date(2026, 8, 7, 12, 0);
-    const expected = renderChronicle(session, endedAt);
+    const session = {
+      name: "2026-06-05",
+      project: {
+        key: "pi-chronicle",
+        progressDir,
+      },
+      startedAt: new Date(2026, 5, 5, 14, 30),
+      marks: [{ time: new Date(2026, 5, 5, 14, 45), label: "CI 緑" }],
+      beats: [
+        {
+          time: new Date(2026, 5, 5, 14, 50),
+          type: "milestone",
+          label: "auto-release.yml 動作確認",
+        },
+      ],
+    };
+    const endedAt = new Date(2026, 5, 5, 15, 10);
+    const fixture = readFileSync(
+      new URL("./fixtures/dogfood-export-checkpoint.md", import.meta.url),
+      "utf8",
+    );
 
-    writeFileSync(chronicleFilePath(session), expected, "utf8");
-    assert.equal(readFileSync(chronicleFilePath(session), "utf8"), expected);
+    const result = writeChronicleSnapshot(session, {
+      endedAt,
+      overwrite: false,
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(readFileSync(result.filePath, "utf8"), fixture);
+    assert.equal(renderChronicle(session, endedAt), fixture);
   });
 });

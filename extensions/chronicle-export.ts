@@ -3,8 +3,10 @@ import type {
   ExtensionCommandContext,
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
+import { hasChronicleEntries } from "../lib/prompt.ts";
 import { writeChronicleSnapshot } from "../lib/chronicle-output.ts";
 import {
+  EMPTY_SESSION_ENTRIES,
   NO_ACTIVE_SESSION,
   SNAPSHOT_ALREADY_EXISTS,
   SNAPSHOT_SAVED,
@@ -21,6 +23,11 @@ export function registerChronicleExport(
       const session = getSession();
       if (!session) {
         ctx.ui.notify(NO_ACTIVE_SESSION, "warning");
+        return;
+      }
+
+      if (!hasChronicleEntries(session)) {
+        ctx.ui.notify(EMPTY_SESSION_ENTRIES, "warning");
         return;
       }
 
