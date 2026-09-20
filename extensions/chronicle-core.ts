@@ -10,6 +10,18 @@ import {
   NO_ACTIVE_SESSION,
 } from "../lib/session-messages.ts";
 
+export function formatChronicleFooterStatus(session: ChronicleSession): string {
+  const { key } = session.project;
+  const marks = session.marks.length;
+  const beats = session.beats.length;
+
+  if (marks === 0 && beats === 0) {
+    return `● ${key} · empty`;
+  }
+
+  return `● ${key} · ${marks}m ${beats}b`;
+}
+
 export function registerChronicleAutostart(
   pi: ExtensionAPI,
   getSession: () => ChronicleSession | undefined,
@@ -33,7 +45,7 @@ export function registerChronicleAutostart(
     };
 
     setSession(session);
-    ctx.ui.setStatus("chronicle", `● ${project.key}`);
+    ctx.ui.setStatus("chronicle", formatChronicleFooterStatus(session));
   });
 }
 

@@ -4,6 +4,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
 import { writeChronicleSnapshot } from "../lib/chronicle-output.ts";
+import { NO_ACTIVE_SESSION } from "../lib/session-messages.ts";
 
 export function registerChronicleEnd(
   pi: ExtensionAPI,
@@ -15,10 +16,7 @@ export function registerChronicleEnd(
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       const session = getSession();
       if (!session) {
-        ctx.ui.notify(
-          "No active session. Sessions auto-start when Pi loads.",
-          "warning",
-        );
+        ctx.ui.notify(NO_ACTIVE_SESSION, "warning");
         return;
       }
 
@@ -31,6 +29,7 @@ export function registerChronicleEnd(
       });
 
       setSession(undefined);
+      ctx.ui.setStatus("chronicle", "");
       ctx.ui.notify(`Chronicle saved: ${result.filePath}`, "info");
     },
   });

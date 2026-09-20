@@ -4,7 +4,7 @@ export const NO_ACTIVE_SESSION =
 
 /** Shown when a session exists but has no marks or beats recorded yet. */
 export const EMPTY_SESSION_ENTRIES =
-  "Session has no marks or beats yet. Add some first.";
+  "Session has no marks or beats yet. Record entries with /chronicle:mark or /chronicle:beat first.";
 
 /** Distill-specific variant of the no-active-session guard. */
 export const NO_ACTIVE_SESSION_DISTILL = "No active session to distill.";
