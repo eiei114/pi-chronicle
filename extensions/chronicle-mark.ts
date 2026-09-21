@@ -3,7 +3,8 @@ import type {
   ExtensionCommandContext,
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
-import { formatTime } from "./chronicle-core.ts";
+import { NO_ACTIVE_SESSION } from "../lib/session-messages.ts";
+import { formatChronicleFooterStatus, formatTime } from "./chronicle-core.ts";
 
 export function registerChronicleMark(
   pi: ExtensionAPI,
@@ -14,10 +15,7 @@ export function registerChronicleMark(
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       const session = getSession();
       if (!session) {
-        ctx.ui.notify(
-          "No active session. Sessions auto-start when Pi loads.",
-          "warning",
-        );
+        ctx.ui.notify(NO_ACTIVE_SESSION, "warning");
         return;
       }
 
@@ -25,6 +23,7 @@ export function registerChronicleMark(
       if (label === undefined || label.trim() === "") return;
 
       session.marks.push({ time: new Date(), label: label.trim() });
+      ctx.ui.setStatus("chronicle", formatChronicleFooterStatus(session));
       ctx.ui.notify(
         `Mark: ${label.trim()} @ ${formatTime(new Date())}`,
         "info",

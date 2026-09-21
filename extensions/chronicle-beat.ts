@@ -4,7 +4,8 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
 import { BEAT_TYPE_LABELS, BEAT_TYPES } from "../lib/session.ts";
-import { formatTime } from "./chronicle-core.ts";
+import { NO_ACTIVE_SESSION } from "../lib/session-messages.ts";
+import { formatChronicleFooterStatus, formatTime } from "./chronicle-core.ts";
 
 export function registerChronicleBeat(
   pi: ExtensionAPI,
@@ -15,10 +16,7 @@ export function registerChronicleBeat(
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       const session = getSession();
       if (!session) {
-        ctx.ui.notify(
-          "No active session. Sessions auto-start when Pi loads.",
-          "warning",
-        );
+        ctx.ui.notify(NO_ACTIVE_SESSION, "warning");
         return;
       }
 
@@ -41,6 +39,7 @@ export function registerChronicleBeat(
         type: beatType,
         label: label.trim(),
       });
+      ctx.ui.setStatus("chronicle", formatChronicleFooterStatus(session));
       ctx.ui.notify(
         `Beat: ${beatType} · ${label.trim()} @ ${formatTime(new Date())}`,
         "info",

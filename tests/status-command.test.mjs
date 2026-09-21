@@ -1,7 +1,10 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
-import { registerChronicleStatus } from "../extensions/chronicle-core.ts";
+import {
+  formatChronicleFooterStatus,
+  registerChronicleStatus,
+} from "../extensions/chronicle-core.ts";
 import {
   EMPTY_SESSION_ENTRIES,
   NO_ACTIVE_SESSION,
@@ -50,6 +53,28 @@ function getCommand(commands, name) {
   assert.ok(command, `${name} should be registered`);
   return command;
 }
+
+describe("formatChronicleFooterStatus", () => {
+  it("shows an empty hint when the session has no marks or beats", () => {
+    const session = makeSession();
+    assert.equal(formatChronicleFooterStatus(session), "● pi-chronicle · empty");
+  });
+
+  it("shows mark and beat counts when entries exist", () => {
+    const session = makeSession({
+      marks: [{ time: new Date(2026, 8, 7, 11, 35), label: "Started work" }],
+      beats: [
+        {
+          time: new Date(2026, 8, 7, 11, 40),
+          type: "decision",
+          label: "Ship it",
+        },
+      ],
+    });
+
+    assert.equal(formatChronicleFooterStatus(session), "● pi-chronicle · 1m 1b");
+  });
+});
 
 describe("chronicle:status", () => {
   it("reports no active session when getSession returns undefined", async () => {

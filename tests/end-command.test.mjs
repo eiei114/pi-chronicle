@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { registerChronicleEnd } from "../extensions/chronicle-end.ts";
 import { chronicleFilePath } from "../lib/chronicle-output.ts";
+import { NO_ACTIVE_SESSION } from "../lib/session-messages.ts";
 
 function makeSession(progressDir, overrides = {}) {
   return {
@@ -33,6 +34,7 @@ function createPiHarness() {
 
 function createContext(closingNote) {
   const notifications = [];
+  const statusUpdates = [];
   const ctx = {
     ui: {
       async input() {
@@ -41,10 +43,13 @@ function createContext(closingNote) {
       notify(message, level) {
         notifications.push({ message, level });
       },
+      setStatus(key, value) {
+        statusUpdates.push({ key, value });
+      },
     },
   };
 
-  return { ctx, notifications };
+  return { ctx, notifications, statusUpdates };
 }
 
 function getCommand(commands, name) {
@@ -79,6 +84,7 @@ describe("chronicle:end", () => {
     assert.equal(context.notifications.length, 1);
     assert.equal(context.notifications[0].level, "info");
     assert.match(context.notifications[0].message, /Chronicle saved:/);
+    assert.deepEqual(context.statusUpdates, [{ key: "chronicle", value: "" }]);
   });
 
   it("warns when no active session exists", async () => {
@@ -93,10 +99,7 @@ describe("chronicle:end", () => {
     await getCommand(commands, "chronicle:end").handler("", context.ctx);
 
     assert.deepEqual(context.notifications, [
-      {
-        message: "No active session. Sessions auto-start when Pi loads.",
-        level: "warning",
-      },
+      { message: NO_ACTIVE_SESSION, level: "warning" },
     ]);
   });
 });

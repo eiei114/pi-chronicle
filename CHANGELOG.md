@@ -8,6 +8,7 @@ This project follows semantic versioning.
 
 ### Changed
 
+- Clarify empty-session user messaging with actionable `/chronicle:mark` and `/chronicle:beat` hints, centralize no-active-session guards across mark/beat/end, and show empty vs entry-count footer status.
 - Dogfood review for `/chronicle:export`: warn on empty sessions, clarify snapshot `ended:` semantics and export→end workflow in docs, and improve re-export guidance.
 - Add dogfood fixture coverage, `writeChronicleSnapshot` unit tests, and `/chronicle:end` command tests.
 
