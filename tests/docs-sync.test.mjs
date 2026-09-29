@@ -6,6 +6,7 @@ const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const publishedVersion = "0.2.0";
 const readme = readFileSync("README.md", "utf8");
 const examplesDoc = readFileSync("docs/examples.md", "utf8");
+const formatDoc = readFileSync("docs/chronicle-format.md", "utf8");
 const releaseDoc = readFileSync("docs/release.md", "utf8");
 const changelog = readFileSync("CHANGELOG.md", "utf8");
 
@@ -57,6 +58,14 @@ describe("docs sync", () => {
       changedHeadings <= 1,
       `CHANGELOG ${pkg.version} should have at most one ### Changed heading (found ${changedHeadings})`,
     );
+  });
+
+  it("chronicle format doc records the renderer contract", () => {
+    assert.match(formatDoc, /## Markdown structure/);
+    assert.match(formatDoc, /## Marks[\s\S]*## Beats[\s\S]*## Closing/);
+    assert.match(formatDoc, /`## Marks` and `## Beats` are always emitted/);
+    assert.match(formatDoc, /does not create links or escape labels/);
+    assert.match(formatDoc, /non-empty closing note/);
   });
 
   it("examples doc documents detected, vault, and outside-vault output locations", () => {
