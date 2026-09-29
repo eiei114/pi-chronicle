@@ -18,8 +18,10 @@ vault/4_Project/pi-chronicle/Progress/chronicle-20260605-1430.md
 
 ## Markdown structure
 
+The renderer keeps these headings stable so chronicle files can be searched or processed by other tools:
+
 ```markdown
-# Chronicle — YYYY-MM-DD
+# Chronicle — <session name>
 started: YYYY-MM-DD HH:MM
 ended: YYYY-MM-DD HH:MM
 
@@ -33,9 +35,12 @@ ended: YYYY-MM-DD HH:MM
 optional closing note
 ```
 
-- **Marks** are timestamped labels (`- HH:MM — label`).
-- **Beats** are typed entries (`decision`, `blocker`, `milestone`, `try`, `revert`) rendered as `### HH:MM · type · label`.
-- **Closing** appears only when `/chronicle:end` receives a closing note. `/chronicle:export` never writes a Closing section.
+- **Title:** `# Chronicle — <session name>` uses the session name verbatim.
+- **Marks:** each timestamped label is `- HH:MM — label`.
+- **Beats:** each typed entry (`decision`, `blocker`, `milestone`, `try`, or `revert`) is `### HH:MM · type · label`.
+- **Closing:** `## Closing` is written only when `/chronicle:end` receives a non-empty closing note. `/chronicle:export` never writes it.
+- **Empty fields:** `## Marks` and `## Beats` are always emitted. With no entries, each heading is followed by an empty line; no placeholder list item is generated. The `started:` and `ended:` fields are always emitted.
+- **Links:** the renderer does not create links or escape labels. Markdown link syntax entered in a label or closing note is preserved verbatim.
 - **`ended:` timestamp** records when the file was written. For `/chronicle:export`, it is the snapshot time — the session stays active and may continue after export. For `/chronicle:end`, it is the session finish time.
 
 ## Export vs end
