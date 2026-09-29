@@ -65,7 +65,8 @@ describe("docs sync", () => {
     assert.match(formatDoc, /## Marks[\s\S]*## Beats[\s\S]*## Closing/);
     assert.match(formatDoc, /`## Marks` and `## Beats` are always emitted/);
     assert.match(formatDoc, /does not create links or escape labels/);
-    assert.match(formatDoc, /non-empty closing note/);
+    assert.match(formatDoc, /`## Closing` is written only when `\/chronicle:end` receives a non-empty closing note\./);
+    assert.match(formatDoc, /`\/chronicle:export` never writes it\./);
   });
 
   it("examples doc documents detected, vault, and outside-vault output locations", () => {
