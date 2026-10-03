@@ -9,12 +9,14 @@ function formatDateTime(date: Date): string {
   return `${y}-${mo}-${d} ${h}:${mi}`;
 }
 
+const timeFormatter = new Intl.DateTimeFormat("ja-JP", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString("ja-JP", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  return timeFormatter.format(date);
 }
 
 export function renderChronicle(
