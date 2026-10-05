@@ -4,25 +4,26 @@ This roadmap is the maintenance-planning source for Pi Chronicle. It favors smal
 
 ## Current release status
 
-- Latest release: **v0.2.0** (package version `0.2.0`, npm `latest` is `0.2.0`, tagged on `main`).
+- Repository package version at this refresh: **v0.3.6** (`package.json`; changelog entry dated 2026-09-30).
 - Baseline: **v0.1.0** shipped the first public chronicle flow — auto-started sessions, `/chronicle:mark`, `/chronicle:beat`, `/chronicle:end`, `/chronicle:status`, `/chronicle:novel`, project detection, and footer status.
 - **v0.2.0** shipped `/chronicle:distill` as a follow-up Markdown artifact handoff for `flow`, `textbook`, `essay`, and `fiction`, with shared prompt rendering between distill and novel.
-- Recent shipped maintenance: README/release doc sync to npm `0.2.0` (PR #42), `/chronicle:novel` follow-up documentation (PR #43), CHANGELOG drift repair and regression checks (PR #40).
-- Current development target: **v0.2.x maintenance** — keep the capture, distill, and novel handoff flows stable while dependency health and docs stay current.
-- Next feature line: **v0.3.0 polish** — session ergonomics, clearer status messaging, and richer examples for non-vault layouts.
-- Open repository PRs at roadmap refresh: Dependabot dev-dependency bump for Pi packages and Node types (#39). No open GitHub issues were present.
+- **v0.3.0** shipped `/chronicle:export` for mid-session snapshots; subsequent patch releases kept the package and Pi SDK dependencies current through `v0.3.6`.
+- Recent repository maintenance: Pi SDK dependency sync to `0.99.1` (v0.3.6), chronicle markdown contract documentation, export/dogfood coverage, and release documentation updates.
+- Current development target: **v0.3.x maintenance** — keep capture, export, distill, and novel handoff flows stable while release metadata and dependencies stay current.
+- Next feature line: **v0.4.0 polish** — session ergonomics, clearer status messaging, and richer examples for non-vault layouts.
+- Publication status should be confirmed separately before release work; this roadmap records repository state and does not assume that `package.json` is the npm `latest` version.
 
 ## Short-term maintenance priorities (next 1–2 releases)
 
-### v0.2.x maintenance line
+### v0.3.x maintenance line
 
 Goal: keep the released capture-and-handoff workflow dependable.
 
-- Merge or triage the remaining Dependabot dev-dependency PR in small, CI-validated batches.
+- Review Pi SDK and type dependency health in small, CI-validated batches.
 - Keep README, `docs/release.md`, and `CHANGELOG.md` synchronized with npm `latest` (guarded by `tests/docs-sync.test.mjs`).
 - Avoid bundling dependency updates with behavior changes.
 
-### v0.3.0 polish line
+### v0.4.0 polish line
 
 Goal: improve day-to-day ergonomics after distill and novel handoffs are stable.
 
@@ -32,45 +33,45 @@ Goal: improve day-to-day ergonomics after distill and novel handoffs are stable.
 
 ## Known technical debt and improvement areas
 
-- `tests/smoke.test.mjs` and `tests/project.test.mjs` overlap on project detection coverage; consolidating them would reduce drift risk.
-- Footer/status messaging for empty sessions and follow-up handoffs could be clearer in the UI layer.
+- `tests/docs-sync.test.mjs` still hard-codes the published version (`0.2.0`), while repository metadata is now at `0.3.6`; release docs and the README pin example have the same drift.
+- Footer/status messaging for empty sessions and follow-up handoffs could be clearer in the UI layer; the unreleased changelog notes partial progress here.
 - `docs/template-checklist.md` is still template-bootstrap oriented; mature-repo maintainers may prefer a trimmed maintainer note or merge into `docs/release.md`.
-- Dependabot PR #39 remains open and should be reviewed rather than left to age.
+- Dependency updates should remain separate from behavior changes and continue to run through the full CI/typecheck path.
 - `ROADMAP.md` is not included in the npm tarball (`package.json` `files`); that is intentional for now but worth revisiting if roadmap context should ship with the package.
 
 ## Candidate maintenance seeds
 
 Each candidate below is intended to fit a **30–90 minute** maintenance window.
 
-### Seed 1: Triage Dependabot dev-dependency PR #39
+### Seed 1: Repair release metadata drift for v0.3.6
 
 - **Scope:** 30–60 minutes.
-- **What:** Review and merge or close the open dev-dependency bump for Pi packages and Node types.
-- **Why:** Stale dependency PRs accumulate toolchain drift and make later release work harder to reason about.
+- **What:** Synchronize the README pinned install example, `docs/release.md`, and `tests/docs-sync.test.mjs` with the repository's current release metadata; verify npm `latest` before stating publication status.
+- **Why:** The current docs and guard test still point at `0.2.0`, which can mislead users and conceal future release drift.
 - **Acceptance criteria:**
-  - `npm run ci` passes on the updated branch.
-  - Incompatible updates are left open with a clear blocker comment or converted into a follow-up issue.
-  - `package-lock.json` stays consistent with `package.json`.
+  - User-facing release references consistently describe the verified current version.
+  - `tests/docs-sync.test.mjs` derives or validates the intended release source without a stale hard-coded target.
+  - `npm run ci` passes.
 
-### Seed 2: Consolidate overlapping project-detection tests
+### Seed 2: Review dependency and Pi SDK maintenance health
+
+- **Scope:** 30–60 minutes.
+- **What:** Review the current Pi SDK/type dependency set and lockfile after the `0.99.1` update; identify only one small, CI-validated follow-up if needed.
+- **Why:** Keeping the extension aligned with the Pi SDK reduces compatibility surprises without mixing dependency work into feature changes.
+- **Acceptance criteria:**
+  - Any update is isolated and justified by compatibility or security evidence.
+  - `package-lock.json` stays consistent with `package.json`.
+  - `npm run ci` passes.
+
+### Seed 3: Consolidate project-detection test coverage
 
 - **Scope:** 45–75 minutes.
-- **What:** Merge `tests/smoke.test.mjs` project cases into `tests/project.test.mjs` (or vice versa) and remove duplicate coverage.
-- **Why:** Two suites exercise similar `detectProject` paths; one focused suite is easier to extend when vault layout rules change.
+- **What:** Inspect the existing project-detection suites and consolidate genuinely overlapping cases without removing coverage for outside-vault and manual fallback behavior.
+- **Why:** A focused suite is easier to extend when vault layout rules change.
 - **Acceptance criteria:**
-  - No loss of coverage for `4_Project` paths, outside-vault behavior, manual fallback keys, or vault-root discovery.
+  - Coverage remains for `4_Project` paths, outside-vault behavior, manual fallback keys, and vault-root discovery.
   - `npm run ci` passes.
   - No user-facing behavior changes.
-
-### Seed 3: Document outside-vault fallback behavior
-
-- **Scope:** 30–60 minutes.
-- **What:** Add a short section to `docs/examples.md` (and a README cross-link if needed) showing manual project key entry and `scratch` fallback when cwd is outside a vault.
-- **Why:** Project detection works outside `4_Project`, but users may not discover the fallback path without an explicit example.
-- **Acceptance criteria:**
-  - Examples describe detected vs manual vs scratch output locations.
-  - Docs remain consistent with the auto-start session model.
-  - No code changes required.
 
 ### Seed 4: Improve empty-session status messaging
 
