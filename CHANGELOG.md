@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.7] - 2026-10-12
+
+### Changed
+
+- Verify compatibility with Pi SDK 1.1.0, pin the SDK dev/test dependencies, and run an actual-host behavior smoke in CI.
+
 ## [0.3.6] - 2026-09-30
 
 ### Changed

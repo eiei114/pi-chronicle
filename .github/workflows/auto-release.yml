@@ -1,10 +1,7 @@
 name: Auto Release
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - package.json
+  workflow_dispatch:
 
 permissions:
   actions: write
@@ -12,6 +9,7 @@ permissions:
 
 jobs:
   release:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     name: Create release for new version
     runs-on: ubuntu-latest
     steps:
