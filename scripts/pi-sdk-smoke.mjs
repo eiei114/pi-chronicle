@@ -20,7 +20,9 @@ import {
 
 const TIMEOUT_MS = 15_000;
 const root = resolve(import.meta.dirname, "..");
-const reportPath = resolve(root, "docs/verification/pi-sdk-smoke.json");
+const reportPath = process.argv.includes("--update-curated-report")
+  ? resolve(root, "docs/verification/pi-sdk-smoke.json")
+  : resolve(root, ".tmp/pi-sdk-smoke.json");
 const manifest = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 const frozenVersions = {
   "@earendil-works/pi-agent-core": "1.1.0",
