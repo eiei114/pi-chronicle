@@ -1,43 +1,43 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { test } from "node:test";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
 
-const releaseWorkflow = readFileSync(
-  new URL("../.github/workflows/auto-release.yml", import.meta.url),
-  "utf8",
-);
-const stableSemverMatch = releaseWorkflow.match(
-  /STABLE_SEMVER_REGEX='([^']+)'/,
-);
+const releaseWorkflow = await readFile(new URL("../.github/workflows/auto-release.yml", import.meta.url), "utf8");
+const publishWorkflow = await readFile(new URL("../.github/workflows/publish.yml", import.meta.url), "utf8");
 
-test("manual release validates stable SemVer against the latest stable tag", () => {
-  assert.ok(stableSemverMatch, "workflow must define stable SemVer validation");
-  assert.match(releaseWorkflow, /on:\s+workflow_dispatch:/);
-  assert.match(
-    releaseWorkflow,
-    /if: github\.event_name == 'workflow_dispatch' && github\.ref == 'refs\/heads\/main'/,
-  );
-  assert.doesNotMatch(releaseWorkflow, /^\s*(?:push|pull_request):/m);
-  assert.match(
-    releaseWorkflow,
-    /\[\[ ! "\$CURRENT_VERSION" =~ \$STABLE_SEMVER_REGEX \]\]/,
-  );
-  assert.match(
-    releaseWorkflow,
-    /\[\[ "\$version" =~ \$STABLE_SEMVER_REGEX \]\]/,
-  );
-  assert.match(
-    releaseWorkflow,
-    /git tag --list 'v\[0-9\]\*' --sort=-version:refname/,
-  );
-  assert.match(releaseWorkflow, /BEFORE=\$\(git rev-list -n 1 "\$PREVIOUS_TAG"\)/);
-  assert.doesNotMatch(releaseWorkflow, /github\.event\.before/);
+function triggerBlock(workflow) {
+  const match = workflow.split(/\npermissions:/)[0].match(/^on:[ \t]*\r?\n((?:[ \t][^\n]*\r?\n)*)/m);
+  return match ? match[1] : "";
+}
 
-  const stableSemver = new RegExp(stableSemverMatch[1]);
-  for (const version of ["0.0.0", "1.2.3", "10.20.30"]) {
-    assert.match(version, stableSemver);
+function topLevelTriggers(block) {
+  return [...block.matchAll(/^  ([A-Za-z_]+):/gm)].map((m) => m[1]);
+}
+
+// Triggers that can start a run without a human choosing to release.
+const AUTOMATIC = ["push", "pull_request", "workflow_run", "schedule", "repository_dispatch", "create", "delete"];
+
+test("no automatic trigger can start the release workflow", () => {
+  const triggers = topLevelTriggers(triggerBlock(releaseWorkflow));
+  assert.ok(triggers.includes("workflow_dispatch"), "release must remain manually dispatchable");
+  for (const automatic of AUTOMATIC) {
+    assert.ok(!triggers.includes(automatic), `release must not be triggered by ${automatic}`);
   }
-  for (const version of ["01.2.3", "1.02.3", "1.2.03", "1.2", "1.2.3-rc.1"]) {
-    assert.doesNotMatch(version, stableSemver);
-  }
+});
+
+test("publishing is not reachable from a branch or path push", () => {
+  const block = triggerBlock(publishWorkflow);
+  assert.doesNotMatch(block, /^\s+branches:/m, "a branch push must not publish");
+  assert.doesNotMatch(block, /^\s+paths:/m, "a path-filtered push must not publish");
+  assert.match(publishWorkflow, /npm publish/);
+});
+
+test("a branch push added to release or publish fails these contracts", () => {
+  const withBranchRelease = releaseWorkflow.replace(/^on:[ \t]*\r?\n/m, "on:\n  push:\n    branches: [main]\n");
+  assert.throws(() => {
+    const triggers = topLevelTriggers(triggerBlock(withBranchRelease));
+    assert.ok(!triggers.includes("push"));
+  });
+  const withBranchPublish = publishWorkflow.replace(/^on:[ \t]*\r?\n/m, "on:\n  push:\n    branches: [main]\n");
+  assert.throws(() => assert.doesNotMatch(triggerBlock(withBranchPublish), /^\s+branches:/m));
 });
