@@ -1,6 +1,6 @@
 {
   "name": "pi-chronicle",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Record conscious markers and typed beats during work sessions, then write chronicle markdown to your vault Progress folder.",
   "type": "module",
   "license": "MIT",
@@ -32,8 +32,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.mjs",
-    "ci": "npm run typecheck && npm test && npm run pack:check",
+    "ci": "npm run typecheck && npm test && npm run smoke:pi && npm run pack:check",
     "pack:check": "npm pack --dry-run",
+    "smoke:pi": "node scripts/pi-sdk-smoke.mjs",
     "release:sync-check": "node scripts/check-release-sync.mjs"
   },
   "pi": {
@@ -52,9 +53,10 @@
     "typebox": "*"
   },
   "devDependencies": {
-    "@earendil-works/pi-ai": "^0.99.1",
-    "@earendil-works/pi-coding-agent": "^0.99.1",
-    "@earendil-works/pi-tui": "^0.99.1",
+    "@earendil-works/pi-agent-core": "1.1.0",
+    "@earendil-works/pi-ai": "1.1.0",
+    "@earendil-works/pi-coding-agent": "1.1.0",
+    "@earendil-works/pi-tui": "1.1.0",
     "@types/node": "^26.0.0",
     "tsx": "^4.23.0",
     "typebox": "latest",

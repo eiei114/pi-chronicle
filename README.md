@@ -124,7 +124,7 @@ The prompt includes the session chronicle text rendered from marks and beats. No
 |---|---|
 | `extensions/` | Pi TypeScript extension entrypoints |
 | `lib/` | Shared session and output logic |
-| `docs/` | Supporting docs (`examples.md`, `release.md`, `template-checklist.md`) |
+| `docs/` | Supporting docs, including [`pi-sdk-compatibility.md`](docs/pi-sdk-compatibility.md) |
 
 ## Development
 
@@ -135,6 +135,7 @@ npm pack --dry-run
 ```
 
 `npm run ci` runs typecheck, tests, and `npm run pack:check` (equivalent to `npm pack --dry-run`).
+The CI suite also runs `npm run smoke:pi` against the pinned Pi SDK on Linux and Windows.
 
 ## Release
 

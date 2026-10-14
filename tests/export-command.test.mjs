@@ -165,7 +165,7 @@ describe("dogfood export checkpoint fixture", () => {
     const fixture = readFileSync(
       new URL("./fixtures/dogfood-export-checkpoint.md", import.meta.url),
       "utf8",
-    );
+    ).replace(/\r\n/g, "\n");
 
     const result = writeChronicleSnapshot(session, {
       endedAt,
