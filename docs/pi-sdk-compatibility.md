@@ -1,28 +1,32 @@
-# Pi SDK 1.1.0 compatibility
+# Pi SDK 1.2.0 compatibility
 
-`pi-chronicle` is typechecked and behavior-smoked against the frozen SDK wave:
+`pi-chronicle` is typechecked and behavior-smoked against these exact
+development/test SDK pins:
 
-- `@earendil-works/pi-agent-core`: `1.1.0`
-- `@earendil-works/pi-ai`: `1.1.0`
-- `@earendil-works/pi-coding-agent`: `1.1.0`
-- `@earendil-works/pi-tui`: `1.1.0`
+- `@earendil-works/pi-agent-core`: `1.2.0`
+- `@earendil-works/pi-ai`: `1.2.0`
+- `@earendil-works/pi-coding-agent`: `1.2.0`
+- `@earendil-works/pi-tui`: `1.2.0`
 
-These exact versions are development/test pins. Public peer dependencies remain
-wildcard ranges so consumers retain control of their Pi host version.
+These exact versions are development/test pins. Public peer dependency ranges
+remain `*`, so consumers retain control of their Pi host version.
 
-The extension surface used here remains supported: `ExtensionAPI`,
-`ExtensionCommandContext`, `pi.registerCommand`, `pi.on("session_start", ...)`,
-`pi.events.emit`, and `ctx.ui.notify` / `setStatus` / `input` / `select`. The
-verified 1.1.0 migration guidance for these APIs requires no replacement or
-behavior change in `pi-chronicle`. Keep checking the SDK's upstream migration
-notes when adding or changing APIs; do not infer replacements from deprecation
-warnings in unrelated packages.
+The extension APIs used by this package—`ExtensionAPI`,
+`ExtensionCommandContext`, `pi.registerCommand`,
+`pi.on("session_start", ...)`, `pi.sendUserMessage`, and the `ctx.ui`
+notification, status, input, and select methods—typecheck and load on 1.2.0.
+No deprecated or removed API used by `pi-chronicle` needs replacement for this
+upgrade.
 
-The [upstream 1.1.0 changelog](https://github.com/earendil-works/pi/blob/v1.1.0/packages/coding-agent/CHANGELOG.md)
-does not deprecate or remove the extension APIs listed above. Its TypeBox 1.x
-migration notes call out removed legacy aliases such as `Type.Base` and
-`Type.Promise`; `pi-chronicle` does not use those aliases. The current extension
-contracts are documented in the [upstream extension guide](https://github.com/earendil-works/pi/blob/v1.1.0/packages/coding-agent/docs/extensions.md).
+The [upstream Pi v1.2.0 release notes](https://github.com/earendil-works/pi/releases/tag/v1.2.0)
+change `before_agent_start`: `BeforeAgentStartEvent` is now a `messageType`
+union (`user` events have `prompt` and `images`; `custom` events have `message`
+and no `prompt`). A handler that reads user-only fields must narrow on
+`event.messageType === "user"`. `pi-chronicle` does not subscribe to this event,
+so no migration is needed. The release also notes startup-session busy state
+and requires `deliverAs` for `sendUserMessage()` during startup; this package
+uses `deliverAs: "followUp"` in its follow-up commands, outside a startup
+handler. Configuration schema/theme changes do not affect this extension.
 
 Run `npm run smoke:pi` for a real, local Pi RPC host check. It loads this package
 through the pinned CLI, checks actual session-start registration and the
