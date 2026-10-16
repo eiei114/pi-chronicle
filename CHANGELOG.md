@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.8] - 2026-10-16
+
+### Changed
+
+- Verify compatibility with Pi SDK 1.2.0 and pin the development/test SDK dependencies.
+
 ## [0.3.7] - 2026-10-12
 
 ### Changed

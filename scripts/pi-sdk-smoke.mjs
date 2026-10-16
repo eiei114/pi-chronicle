@@ -25,10 +25,10 @@ const reportPath = process.argv.includes("--update-curated-report")
   : resolve(root, ".tmp/pi-sdk-smoke.json");
 const manifest = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 const frozenVersions = {
-  "@earendil-works/pi-agent-core": "1.1.0",
-  "@earendil-works/pi-ai": "1.1.0",
-  "@earendil-works/pi-coding-agent": "1.1.0",
-  "@earendil-works/pi-tui": "1.1.0",
+  "@earendil-works/pi-agent-core": "1.2.0",
+  "@earendil-works/pi-ai": "1.2.0",
+  "@earendil-works/pi-coding-agent": "1.2.0",
+  "@earendil-works/pi-tui": "1.2.0",
 };
 const requiredAssertionIds = {
   extension_load: ["extension_registered"],
@@ -386,7 +386,7 @@ try {
     verification_contract: VERIFICATION_CONTRACT,
     sdk_versions: sdkVersions,
     platform: process.platform,
-    model_inference: "none; actual Pi 1.1.0 host handles deterministic extension RPC commands",
+    model_inference: "none; actual Pi 1.2.0 host handles deterministic extension RPC commands",
     isolated_agent_dir: true,
     process_timeout_ms: TIMEOUT_MS,
     unhandled_errors: cases.filter((item) => item.hasUnhandledError).length,
