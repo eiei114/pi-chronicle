@@ -6,6 +6,7 @@ import { registerChronicleNovel } from "../extensions/chronicle-novel.ts";
 import {
   DISTILL_FORMAT_CONTRACTS,
   formatFilenameTs,
+  renderChronicleForPrompt,
 } from "../lib/prompt.ts";
 import {
   EMPTY_SESSION_ENTRIES,
@@ -83,6 +84,25 @@ function getCommand(commands, name) {
 }
 
 describe("chronicle:distill", () => {
+  it("keeps localized timeline times and chronological order in the shared prompt", () => {
+    const prompt = renderChronicleForPrompt(makeSession({
+      marks: [
+        { time: new Date(2026, 7, 17, 10, 35), label: "First mark" },
+      ],
+      beats: [
+        {
+          time: new Date(2026, 7, 17, 10, 40),
+          type: "decision",
+          label: "Next decision",
+        },
+      ],
+    }));
+
+    assert.match(prompt, /- 10:35 — mark — First mark/);
+    assert.match(prompt, /- 10:40 — beat:decision — Next decision/);
+    assert.ok(prompt.indexOf("First mark") < prompt.indexOf("Next decision"));
+  });
+
   it("keeps the no-active-session warning path and does not send a follow-up", async () => {
     const { commands, sentMessages, pi } = createPiHarness();
     registerChronicleDistill(pi, () => undefined);

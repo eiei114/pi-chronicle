@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.9] - 2026-10-18
+
+### Changed
+
+- Cache the Japanese time formatter used for each distill and novel timeline entry.
+
 ## [0.3.8] - 2026-10-16
 
 ### Changed

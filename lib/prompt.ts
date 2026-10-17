@@ -8,6 +8,12 @@ export const DISTILL_FORMAT_CONTRACTS = {
   fiction: "short narrative entrypoint aligned with /chronicle:novel, but reached through the distill format chooser.",
 } satisfies Record<DistillType, string>;
 
+const promptTimeFormatter = new Intl.DateTimeFormat("ja-JP", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
 export function hasChronicleEntries(session: ChronicleSession): boolean {
   return session.marks.length > 0 || session.beats.length > 0;
 }
@@ -92,9 +98,5 @@ export function renderDistillPrompt(
 }
 
 function formatPromptTime(date: Date): string {
-  return date.toLocaleTimeString("ja-JP", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  return promptTimeFormatter.format(date);
 }
