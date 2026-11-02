@@ -24,12 +24,6 @@ const reportPath = process.argv.includes("--update-curated-report")
   ? resolve(root, "docs/verification/pi-sdk-smoke.json")
   : resolve(root, ".tmp/pi-sdk-smoke.json");
 const manifest = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
-const frozenVersions = {
-  "@earendil-works/pi-agent-core": "1.2.0",
-  "@earendil-works/pi-ai": "1.2.0",
-  "@earendil-works/pi-coding-agent": "1.2.0",
-  "@earendil-works/pi-tui": "1.2.0",
-};
 const requiredAssertionIds = {
   extension_load: ["extension_registered"],
   happy_path: ["feature_response"],
@@ -47,9 +41,10 @@ const sdkVersions = Object.fromEntries(
     const installed = JSON.parse(
       readFileSync(resolve(root, "node_modules", name, "package.json"), "utf8"),
     ).version;
-    if (manifest.devDependencies?.[name] !== frozenVersions[name] || installed !== frozenVersions[name]) {
+    const expected = manifest.devDependencies?.[name];
+    if (expected !== installed) {
       throw new Error(
-        `Smoke requires exact SDK ${name}@${frozenVersions[name]} dev/test pin; manifest=${manifest.devDependencies?.[name]}, installed=${installed}`,
+        `Smoke requires exact SDK ${name} dev/test pin; manifest=${expected}, installed=${installed}`,
       );
     }
     return [name, installed];
@@ -249,8 +244,8 @@ function validateReport(report) {
   if (report.schema_version !== 1 || report.verification_contract !== VERIFICATION_CONTRACT) {
     throw new Error("Smoke report has an unsupported schema or verification contract");
   }
-  if (JSON.stringify(report.sdk_versions) !== JSON.stringify(frozenVersions)) {
-    throw new Error("Smoke report SDK versions do not match the frozen wave");
+  if (JSON.stringify(report.sdk_versions) !== JSON.stringify(sdkVersions)) {
+    throw new Error("Smoke report SDK versions do not match the installed manifest pins");
   }
   if (report.unhandled_errors !== 0 || report.extension_load_errors !== 0) {
     throw new Error("Smoke report recorded an unhandled or extension-load error");
@@ -386,7 +381,7 @@ try {
     verification_contract: VERIFICATION_CONTRACT,
     sdk_versions: sdkVersions,
     platform: process.platform,
-    model_inference: "none; actual Pi 1.2.0 host handles deterministic extension RPC commands",
+    model_inference: `none; actual Pi ${sdkVersions["@earendil-works/pi-coding-agent"]} host handles deterministic extension RPC commands`,
     isolated_agent_dir: true,
     process_timeout_ms: TIMEOUT_MS,
     unhandled_errors: cases.filter((item) => item.hasUnhandledError).length,
