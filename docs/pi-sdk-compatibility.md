@@ -1,12 +1,12 @@
-# Pi SDK 1.2.0 compatibility
+# Pi SDK 1.5.0 compatibility
 
 `pi-chronicle` is typechecked and behavior-smoked against these exact
 development/test SDK pins:
 
-- `@earendil-works/pi-agent-core`: `1.2.0`
-- `@earendil-works/pi-ai`: `1.2.0`
-- `@earendil-works/pi-coding-agent`: `1.2.0`
-- `@earendil-works/pi-tui`: `1.2.0`
+- `@earendil-works/pi-agent-core`: `1.5.0`
+- `@earendil-works/pi-ai`: `1.5.0`
+- `@earendil-works/pi-coding-agent`: `1.5.0`
+- `@earendil-works/pi-tui`: `1.5.0`
 
 These exact versions are development/test pins. Public peer dependency ranges
 remain `*`, so consumers retain control of their Pi host version.
@@ -14,19 +14,26 @@ remain `*`, so consumers retain control of their Pi host version.
 The extension APIs used by this package—`ExtensionAPI`,
 `ExtensionCommandContext`, `pi.registerCommand`,
 `pi.on("session_start", ...)`, `pi.sendUserMessage`, and the `ctx.ui`
-notification, status, input, and select methods—typecheck and load on 1.2.0.
-No deprecated or removed API used by `pi-chronicle` needs replacement for this
-upgrade.
+notification, status, input, and select methods—typecheck and load on 1.5.0.
+The upstream v1.2.0 release changed `before_agent_start` events to a
+`messageType` union (`user` events have `prompt` and `images`; `custom` events
+have `message` and no `prompt`) and requires `deliverAs` for startup
+`sendUserMessage()` calls. This package does not subscribe to
+`before_agent_start`; its follow-up commands explicitly use
+`deliverAs: "followUp"`, outside startup handlers.
 
-The [upstream Pi v1.2.0 release notes](https://github.com/earendil-works/pi/releases/tag/v1.2.0)
-change `before_agent_start`: `BeforeAgentStartEvent` is now a `messageType`
-union (`user` events have `prompt` and `images`; `custom` events have `message`
-and no `prompt`). A handler that reads user-only fields must narrow on
-`event.messageType === "user"`. `pi-chronicle` does not subscribe to this event,
-so no migration is needed. The release also notes startup-session busy state
-and requires `deliverAs` for `sendUserMessage()` during startup; this package
-uses `deliverAs: "followUp"` in its follow-up commands, outside a startup
-handler. Configuration schema/theme changes do not affect this extension.
+The v1.5.0 release moves tool argument validation to `@earendil-works/pi-schema`,
+so TypeBox-only features such as `Type.Refine()`, `Type.BigInt()`,
+`Type.Undefined()`, codecs, and custom `Format.Set()` formats no longer affect
+tool arguments. `pi-chronicle` registers commands only: it has no tool argument
+schemas or TypeBox imports, so this migration does not affect it. The release
+also changes `pi-ai`'s TypeBox compatibility exports; this package does not
+import `Type`, `Static`, or `TSchema` from `pi-ai`. Reviewed the upstream
+[Pi v1.2.0](https://github.com/earendil-works/pi/releases/tag/v1.2.0),
+[v1.3.0](https://github.com/earendil-works/pi/releases/tag/v1.3.0),
+[v1.4.0](https://github.com/earendil-works/pi/releases/tag/v1.4.0), and
+[v1.5.0](https://github.com/earendil-works/pi/releases/tag/v1.5.0) release
+notes; no deprecated or removed API used by this package needs replacement.
 
 Run `npm run smoke:pi` for a real, local Pi RPC host check. It loads this package
 through the pinned CLI, checks actual session-start registration and the
