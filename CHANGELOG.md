@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.11] - 2026-11-12
+
+### Changed
+
+- Sync release documentation to the published `0.3.10` line: pin the README install example to `0.3.10`, extend the recovery log, and derive the published version in `tests/docs-sync.test.mjs` from the release table instead of a hard-coded value.
+- Add a docs-sync guard that keeps `ROADMAP.md` release status on the current package version.
+
 ## [0.3.10] - 2026-11-07
 
 ### Changed
