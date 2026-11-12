@@ -4,14 +4,14 @@ This roadmap is the maintenance-planning source for Pi Chronicle. It favors smal
 
 ## Current release status
 
-- Repository package version at this refresh: **v0.3.6** (`package.json`; changelog entry dated 2026-09-30).
+- Repository package version at this refresh: **v0.3.11** (`package.json`; changelog entry dated 2026-11-12). The published npm `latest` is still **v0.3.10** until this maintenance PR is released.
 - Baseline: **v0.1.0** shipped the first public chronicle flow — auto-started sessions, `/chronicle:mark`, `/chronicle:beat`, `/chronicle:end`, `/chronicle:status`, `/chronicle:novel`, project detection, and footer status.
 - **v0.2.0** shipped `/chronicle:distill` as a follow-up Markdown artifact handoff for `flow`, `textbook`, `essay`, and `fiction`, with shared prompt rendering between distill and novel.
-- **v0.3.0** shipped `/chronicle:export` for mid-session snapshots; subsequent patch releases kept the package and Pi SDK dependencies current through `v0.3.6`.
-- Recent repository maintenance: Pi SDK dependency sync to `0.99.1` (v0.3.6), chronicle markdown contract documentation, export/dogfood coverage, and release documentation updates.
+- **v0.3.0** shipped `/chronicle:export` for mid-session snapshots; subsequent patch releases kept the package and Pi SDK dependencies current through `v0.3.10`.
+- Recent repository maintenance: Pi SDK 1.5.0 pin with actual-host smoke evidence (v0.3.10), distill timeline formatter caching (v0.3.9), Pi SDK `0.99.1` dependency sync (v0.3.6), chronicle markdown contract documentation, and export/dogfood coverage.
 - Current development target: **v0.3.x maintenance** — keep capture, export, distill, and novel handoff flows stable while release metadata and dependencies stay current.
 - Next feature line: **v0.4.0 polish** — session ergonomics, clearer status messaging, and richer examples for non-vault layouts.
-- Publication status should be confirmed separately before release work; this roadmap records repository state and does not assume that `package.json` is the npm `latest` version.
+- Publication status was re-verified for the published line v0.3.10 (`npm view pi-chronicle version` → `0.3.10`, 2026-11-12); refresh this value before release work rather than assuming it stays current.
 
 ## Short-term maintenance priorities (next 1–2 releases)
 
@@ -33,7 +33,7 @@ Goal: improve day-to-day ergonomics after distill and novel handoffs are stable.
 
 ## Known technical debt and improvement areas
 
-- `tests/docs-sync.test.mjs` still hard-codes the published version (`0.2.0`), while repository metadata is now at `0.3.6`; release docs and the README pin example have the same drift.
+- Release metadata drift (README pin, `docs/release.md`, hard-coded version in `tests/docs-sync.test.mjs`) was repaired in DOT-3396; the guard test now derives the published version from the `(latest)` row in `docs/release.md`. Seed 6 below adds a ROADMAP freshness guard on top of that.
 - Footer/status messaging for empty sessions and follow-up handoffs could be clearer in the UI layer; the unreleased changelog notes partial progress here.
 - `docs/template-checklist.md` is still template-bootstrap oriented; mature-repo maintainers may prefer a trimmed maintainer note or merge into `docs/release.md`.
 - Dependency updates should remain separate from behavior changes and continue to run through the full CI/typecheck path.
@@ -43,11 +43,13 @@ Goal: improve day-to-day ergonomics after distill and novel handoffs are stable.
 
 Each candidate below is intended to fit a **30–90 minute** maintenance window.
 
-### Seed 1: Repair release metadata drift for v0.3.6
+### Seed 1: Repair release metadata drift (completed for v0.3.10)
 
-- **Scope:** 30–60 minutes.
+- **Status:** done in DOT-3396 — README pin, `docs/release.md`, and `tests/docs-sync.test.mjs` now follow npm `latest` `0.3.10`, and the test derives the version from the release table instead of hard-coding it.
+- **Follow-up:** replace the hard-coded version in the maintenance pattern below with a derived one whenever the release table changes.
+- **Original scope:** 30–60 minutes.
 - **What:** Synchronize the README pinned install example, `docs/release.md`, and `tests/docs-sync.test.mjs` with the repository's current release metadata; verify npm `latest` before stating publication status.
-- **Why:** The current docs and guard test still point at `0.2.0`, which can mislead users and conceal future release drift.
+- **Why:** The docs and guard test previously pointed at `0.2.0`, which could mislead users and conceal future release drift.
 - **Acceptance criteria:**
   - User-facing release references consistently describe the verified current version.
   - `tests/docs-sync.test.mjs` derives or validates the intended release source without a stale hard-coded target.
@@ -93,9 +95,10 @@ Each candidate below is intended to fit a **30–90 minute** maintenance window.
   - Public README links remain accurate.
   - No code changes required.
 
-### Seed 6: Add ROADMAP freshness guard to docs-sync tests
+### Seed 6: Add ROADMAP freshness guard to docs-sync tests (completed)
 
-- **Scope:** 30–45 minutes.
+- **Status:** done in DOT-3396 — `tests/docs-sync.test.mjs` now asserts that the ROADMAP release-status line names the `package.json` version.
+- **Original scope:** 30–45 minutes.
 - **What:** Extend `tests/docs-sync.test.mjs` with a lightweight assertion that `ROADMAP.md` references the current `package.json` version in its release status section.
 - **Why:** Stale roadmap context blocks weekly maintenance seed planners; a small regression test prevents silent drift after releases.
 - **Acceptance criteria:**
