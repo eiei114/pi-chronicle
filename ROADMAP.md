@@ -35,7 +35,6 @@ Goal: improve day-to-day ergonomics after distill and novel handoffs are stable.
 
 - Release metadata drift (README pin, `docs/release.md`, hard-coded version in `tests/docs-sync.test.mjs`) was repaired in DOT-3396; the guard test now derives the published version from the `(latest)` row in `docs/release.md`. Seed 6 below adds a ROADMAP freshness guard on top of that.
 - Footer/status messaging for empty sessions and follow-up handoffs could be clearer in the UI layer; the unreleased changelog notes partial progress here.
-- `docs/template-checklist.md` is still template-bootstrap oriented; mature-repo maintainers may prefer a trimmed maintainer note or merge into `docs/release.md`.
 - Dependency updates should remain separate from behavior changes and continue to run through the full CI/typecheck path.
 - `ROADMAP.md` is not included in the npm tarball (`package.json` `files`); that is intentional for now but worth revisiting if roadmap context should ship with the package.
 
@@ -85,15 +84,9 @@ Each candidate below is intended to fit a **30–90 minute** maintenance window.
   - Existing follow-up command tests still pass or are updated to match improved copy.
   - `npm run ci` passes.
 
-### Seed 5: Trim template-oriented maintainer docs
+### Seed 5: Remove shipped template setup checklist (completed)
 
-- **Scope:** 30–60 minutes.
-- **What:** Review `docs/template-checklist.md` and either trim first-release checklist items, mark it maintainer-only in README, or move useful release checklist fragments into `docs/release.md`.
-- **Why:** Template setup material can distract from package usage docs after the initial release.
-- **Acceptance criteria:**
-  - Maintainer docs have a clear purpose and no stale first-release placeholders.
-  - Public README links remain accurate.
-  - No code changes required.
+- **Status:** done in DOT-4046 — obsolete template-bootstrap material was removed; useful release and examples documentation remains.
 
 ### Seed 6: Add ROADMAP freshness guard to docs-sync tests (completed)
 
