@@ -1,12 +1,12 @@
-# Pi SDK 1.5.0 compatibility
+# Pi SDK 1.5.2 compatibility
 
 `pi-chronicle` is typechecked and behavior-smoked against these exact
 development/test SDK pins:
 
-- `@earendil-works/pi-agent-core`: `1.5.0`
-- `@earendil-works/pi-ai`: `1.5.0`
-- `@earendil-works/pi-coding-agent`: `1.5.0`
-- `@earendil-works/pi-tui`: `1.5.0`
+- `@earendil-works/pi-agent-core`: `1.5.2`
+- `@earendil-works/pi-ai`: `1.5.2`
+- `@earendil-works/pi-coding-agent`: `1.5.2`
+- `@earendil-works/pi-tui`: `1.5.2`
 
 These exact versions are development/test pins. Public peer dependency ranges
 remain `*`, so consumers retain control of their Pi host version.
@@ -14,7 +14,9 @@ remain `*`, so consumers retain control of their Pi host version.
 The extension APIs used by this package—`ExtensionAPI`,
 `ExtensionCommandContext`, `pi.registerCommand`,
 `pi.on("session_start", ...)`, `pi.sendUserMessage`, and the `ctx.ui`
-notification, status, input, and select methods—typecheck and load on 1.5.0.
+notification, status, input, and select methods—typecheck and load on 1.5.2.
+The historical API notes below describe changes introduced in earlier SDK
+releases; the current exact-pin compatibility evidence is for 1.5.2.
 The upstream v1.2.0 release changed `before_agent_start` events to a
 `messageType` union (`user` events have `prompt` and `images`; `custom` events
 have `message` and no `prompt`) and requires `deliverAs` for startup
@@ -35,7 +37,7 @@ import `Type`, `Static`, or `TSchema` from `pi-ai`. Reviewed the upstream
 [v1.5.0](https://github.com/earendil-works/pi/releases/tag/v1.5.0) release
 notes; no deprecated or removed API used by this package needs replacement.
 
-Run `npm run smoke:pi` for a real, local Pi RPC host check. It loads this package
+Run `npm run smoke:pi` for a real, local Pi 1.5.2 RPC host check. It loads this package
 through the pinned CLI, checks actual session-start registration and the
 `/chronicle:status` feature response, verifies the handled empty-export warning
 without creating project files, starts a second host to verify reload and clean
