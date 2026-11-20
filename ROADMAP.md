@@ -4,11 +4,11 @@ This roadmap is the maintenance-planning source for Pi Chronicle. It favors smal
 
 ## Current release status
 
-- Repository package version at this refresh: **v0.3.11** (`package.json`; changelog entry dated 2026-11-12). The published npm `latest` is still **v0.3.10** until this maintenance PR is released.
+- Repository package version at this refresh: **v0.3.12** (`package.json`; changelog entry dated 2026-11-21). The published npm `latest` is still **v0.3.10** until a release is published.
 - Baseline: **v0.1.0** shipped the first public chronicle flow — auto-started sessions, `/chronicle:mark`, `/chronicle:beat`, `/chronicle:end`, `/chronicle:status`, `/chronicle:novel`, project detection, and footer status.
 - **v0.2.0** shipped `/chronicle:distill` as a follow-up Markdown artifact handoff for `flow`, `textbook`, `essay`, and `fiction`, with shared prompt rendering between distill and novel.
 - **v0.3.0** shipped `/chronicle:export` for mid-session snapshots; subsequent patch releases kept the package and Pi SDK dependencies current through `v0.3.10`.
-- Recent repository maintenance: Pi SDK 1.5.0 pin with actual-host smoke evidence (v0.3.10), distill timeline formatter caching (v0.3.9), Pi SDK `0.99.1` dependency sync (v0.3.6), chronicle markdown contract documentation, and export/dogfood coverage.
+- Recent repository maintenance: Pi SDK 1.5.2 pin with actual-host smoke evidence (prepared v0.3.12), Pi SDK 1.5.0 compatibility baseline (v0.3.10), distill timeline formatter caching (v0.3.9), Pi SDK `0.99.1` dependency sync (v0.3.6), chronicle markdown contract documentation, and export/dogfood coverage.
 - Current development target: **v0.3.x maintenance** — keep capture, export, distill, and novel handoff flows stable while release metadata and dependencies stay current.
 - Next feature line: **v0.4.0 polish** — session ergonomics, clearer status messaging, and richer examples for non-vault layouts.
 - Publication status was re-verified for the published line v0.3.10 (`npm view pi-chronicle version` → `0.3.10`, 2026-11-12); refresh this value before release work rather than assuming it stays current.

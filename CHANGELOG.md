@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.12] - 2026-11-21
+
+### Changed
+
+- Verify compatibility with Pi SDK 1.5.2, pin the development/test SDK dependencies, and refresh the actual-host smoke evidence.
+
 ## [0.3.11] - 2026-11-12
 
 ### Changed
