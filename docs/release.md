@@ -77,6 +77,8 @@ gh release list --repo eiei114/pi-chronicle --limit 10
 
 `release:sync-check` fails when npm `latest` does not match `package.json`. It warns (without failing) when older GitHub releases are missing on npm but `latest` is correct — common after a failed intermediate publish that was later superseded.
 
+A failing check is expected between a version bump on `main` and its auto-release run, because `package.json` is then ahead of npm `latest`. It is also the check that catches the opposite, worse case: a checkout whose `package.json` is behind the published release.
+
 ### Recover a missed publish for an existing tag
 
 1. Confirm Trusted Publishing is working (see DOT-493 root cause: no `registry-url` in `setup-node`).
@@ -103,8 +105,13 @@ npm rejects applying `latest` to an older version when a higher version is alrea
 | 0.1.4   | yes            | yes | Patch release (#20) |
 | 0.1.5   | yes            | yes | Discord badge, README pin sync, and test coverage batch |
 | 0.1.6   | yes            | yes | Managed OSS dependency and maintenance batch |
-| 0.2.0   | yes (latest)   | yes | Distill follow-up prompt handoff |
+| 0.2.0   | yes            | yes | Distill follow-up prompt handoff |
+| 0.3.0   | yes            | yes | `/chronicle:export` mid-session snapshots (run [34718335055](https://github.com/eiei114/pi-chronicle/actions/runs/34718335055)) |
+| 0.3.5   | yes            | yes | First published patch of the `0.3.x` line; supersedes the unpublished `0.3.1`–`0.3.4` bumps (first publish attempt [36304276292](https://github.com/eiei114/pi-chronicle/actions/runs/36304276292) failed, retry [36308094674](https://github.com/eiei114/pi-chronicle/actions/runs/36308094674) succeeded) |
+| 0.3.6   | yes            | yes | Pi SDK `0.99.1` dependency sync (run [36739660982](https://github.com/eiei114/pi-chronicle/actions/runs/36739660982)) |
+| 0.3.9   | yes            | yes | Distill/novel timeline formatter caching (#72, run [39362752003](https://github.com/eiei114/pi-chronicle/actions/runs/39362752003)) |
+| 0.3.10  | yes (latest)   | yes | Pi SDK 1.5.0 pin and smoke evidence (run [42402785798](https://github.com/eiei114/pi-chronicle/actions/runs/42402785798)) |
 
-Current published release line is `0.2.0`: npm `latest` is `0.2.0`. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
+Current published release line is `0.3.10`: npm `latest` is `0.3.10`. The latest marker in the table above is the single source of truth that `tests/docs-sync.test.mjs` reads, so the README pin and this sentence cannot drift apart silently. GitHub releases `0.3.1`–`0.3.4` were periodic patch bumps that were never published to npm and are superseded by `0.3.5`. Gap at `0.1.1` is documented; optional backfill only if semver completeness is required (non-`latest` dist-tag).
 
 Full investigation for run 28700780370: [docs/investigations/failed-npm-publish-run-2026-07-04.md](./investigations/failed-npm-publish-run-2026-07-04.md).
