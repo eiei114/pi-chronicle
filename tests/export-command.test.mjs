@@ -4,6 +4,7 @@ import {
   existsSync,
   mkdtempSync,
   readFileSync,
+  rmSync,
   writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
@@ -105,6 +106,53 @@ describe("chronicle:export", () => {
       { message: EMPTY_SESSION_ENTRIES, level: "warning" },
     ]);
     assert.ok(!existsSync(chronicleFilePath(session)));
+  });
+
+  it("reports a blocked output directory and lets the same session retry", async (t) => {
+    const root = mkdtempSync(join(tmpdir(), "pi-chronicle-export-"));
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const blockedParent = join(root, "vault");
+    writeFileSync(blockedParent, "not a directory", "utf8");
+
+    const progressDir = join(blockedParent, "Progress");
+    const session = makeSession(progressDir, {
+      beats: [
+        { time: new Date(2026, 8, 7, 11, 40), type: "milestone", label: "Tests pass" },
+      ],
+    });
+    const originalEntries = structuredClone({
+      marks: session.marks,
+      beats: session.beats,
+    });
+    const getSession = () => session;
+    const { commands, pi } = createPiHarness();
+    registerChronicleExport(pi, getSession);
+    const command = getCommand(commands, "chronicle:export");
+    const { ctx, notifications } = createContext();
+    const filePath = chronicleFilePath(session);
+
+    await command.handler("", ctx);
+
+    assert.deepEqual(notifications, [
+      {
+        message: `Could not export Chronicle snapshot to ${progressDir}. ` +
+          "Check the vault path and write permissions, then retry /chronicle:export.",
+        level: "error",
+      },
+    ]);
+    assert.ok(!existsSync(filePath));
+    assert.equal(getSession(), session);
+    assert.deepEqual({ marks: session.marks, beats: session.beats }, originalEntries);
+
+    rmSync(blockedParent);
+    await command.handler("", ctx);
+
+    assert.deepEqual(notifications.slice(1), [
+      { message: SNAPSHOT_SAVED(filePath), level: "info" },
+    ]);
+    const content = readFileSync(filePath, "utf8");
+    assert.match(content, /Started work/);
+    assert.match(content, /Tests pass/);
   });
 
   it("fails closed when no active session exists", async () => {

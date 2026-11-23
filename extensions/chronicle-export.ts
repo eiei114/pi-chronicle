@@ -31,10 +31,20 @@ export function registerChronicleExport(
         return;
       }
 
-      const result = writeChronicleSnapshot(session, {
-        endedAt: new Date(),
-        overwrite: false,
-      });
+      let result;
+      try {
+        result = writeChronicleSnapshot(session, {
+          endedAt: new Date(),
+          overwrite: false,
+        });
+      } catch {
+        ctx.ui.notify(
+          `Could not export Chronicle snapshot to ${session.project.progressDir}. ` +
+            "Check the vault path and write permissions, then retry /chronicle:export.",
+          "error",
+        );
+        return;
+      }
 
       if (!result.ok) {
         ctx.ui.notify(SNAPSHOT_ALREADY_EXISTS(result.filePath), "warning");
