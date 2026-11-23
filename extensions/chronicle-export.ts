@@ -4,7 +4,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
 import { hasChronicleEntries } from "../lib/prompt.ts";
-import { writeChronicleSnapshot } from "../lib/chronicle-output.ts";
+import { chronicleFilePath, writeChronicleSnapshot } from "../lib/chronicle-output.ts";
 import {
   EMPTY_SESSION_ENTRIES,
   NO_ACTIVE_SESSION,
@@ -39,8 +39,10 @@ export function registerChronicleExport(
         });
       } catch {
         ctx.ui.notify(
-          `Could not export Chronicle snapshot to ${session.project.progressDir}. ` +
-            "Check the vault path and write permissions, then retry /chronicle:export.",
+          `Could not export Chronicle snapshot to ${chronicleFilePath(session)}. ` +
+            "Check the vault path, write permissions, and free space. " +
+            "If the file exists, move it aside only if you confirm it is incomplete. " +
+            "Then retry /chronicle:export.",
           "error",
         );
         return;
