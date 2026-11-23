@@ -1,11 +1,14 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import {
+import fs, {
   existsSync,
   mkdtempSync,
   readFileSync,
+  renameSync,
+  rmSync,
   writeFileSync,
 } from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { registerChronicleExport } from "../extensions/chronicle-export.ts";
@@ -105,6 +108,111 @@ describe("chronicle:export", () => {
       { message: EMPTY_SESSION_ENTRIES, level: "warning" },
     ]);
     assert.ok(!existsSync(chronicleFilePath(session)));
+  });
+
+  it("reports a blocked output directory and lets the same session retry", async (t) => {
+    const root = mkdtempSync(join(tmpdir(), "pi-chronicle-export-"));
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const blockedParent = join(root, "vault");
+    writeFileSync(blockedParent, "not a directory", "utf8");
+
+    const progressDir = join(blockedParent, "Progress");
+    const session = makeSession(progressDir, {
+      beats: [
+        { time: new Date(2026, 8, 7, 11, 40), type: "milestone", label: "Tests pass" },
+      ],
+    });
+    const originalEntries = structuredClone({
+      marks: session.marks,
+      beats: session.beats,
+    });
+    const getSession = () => session;
+    const { commands, pi } = createPiHarness();
+    registerChronicleExport(pi, getSession);
+    const command = getCommand(commands, "chronicle:export");
+    const { ctx, notifications } = createContext();
+    const filePath = chronicleFilePath(session);
+
+    await command.handler("", ctx);
+
+    assert.deepEqual(notifications, [
+      {
+        message: `Could not export Chronicle snapshot to ${filePath}. ` +
+          "Check the vault path, write permissions, and free space. " +
+          "If the file exists, move it aside only if you confirm it is incomplete. " +
+          "Then retry /chronicle:export.",
+        level: "error",
+      },
+    ]);
+    assert.ok(!existsSync(filePath));
+    assert.equal(getSession(), session);
+    assert.deepEqual({ marks: session.marks, beats: session.beats }, originalEntries);
+
+    rmSync(blockedParent);
+    await command.handler("", ctx);
+
+    assert.deepEqual(notifications.slice(1), [
+      { message: SNAPSHOT_SAVED(filePath), level: "info" },
+    ]);
+    const content = readFileSync(filePath, "utf8");
+    assert.match(content, /Started work/);
+    assert.match(content, /Tests pass/);
+  });
+
+  it("guides recovery from a partial write without ending the session", async (t) => {
+    const progressDir = mkdtempSync(join(tmpdir(), "pi-chronicle-export-"));
+    t.after(() => rmSync(progressDir, { recursive: true, force: true }));
+    const session = makeSession(progressDir, {
+      beats: [
+        { time: new Date(2026, 8, 7, 11, 40), type: "milestone", label: "Tests pass" },
+      ],
+    });
+    const originalSession = structuredClone(session);
+    const filePath = chronicleFilePath(session);
+    const { commands, pi } = createPiHarness();
+    registerChronicleExport(pi, () => session);
+    const command = getCommand(commands, "chronicle:export");
+    const { ctx, notifications } = createContext();
+
+    const realWrite = writeFileSync;
+    const partialContent = "# Chronicle";
+    const write = t.mock.method(fs, "writeFileSync", (path, ...args) => {
+      if (path !== filePath) return realWrite(path, ...args);
+      realWrite(path, partialContent, "utf8");
+      throw Object.assign(new Error("No space left on device"), { code: "ENOSPC" });
+    });
+    syncBuiltinESMExports();
+    try {
+      await command.handler("", ctx);
+    } finally {
+      write.mock.restore();
+      syncBuiltinESMExports();
+    }
+
+    assert.equal(readFileSync(filePath, "utf8"), partialContent);
+    assert.deepEqual(session, originalSession);
+    await command.handler("", ctx);
+    assert.equal(readFileSync(filePath, "utf8"), partialContent);
+    assert.equal(notifications.length, 2);
+    assert.deepEqual(notifications[1], {
+      message: SNAPSHOT_ALREADY_EXISTS(filePath),
+      level: "warning",
+    });
+    assert.equal(notifications[0].level, "error");
+    assert.ok(notifications[0].message.includes(filePath));
+    assert.match(notifications[0].message, /move it aside only if you confirm it is incomplete/i);
+    assert.match(notifications[0].message, /retry \/chronicle:export/);
+
+    renameSync(filePath, join(progressDir, "incomplete-snapshot.bak"));
+    await command.handler("", ctx);
+
+    assert.deepEqual(notifications.slice(2), [
+      { message: SNAPSHOT_SAVED(filePath), level: "info" },
+    ]);
+    const content = readFileSync(filePath, "utf8");
+    assert.match(content, /Started work/);
+    assert.match(content, /Tests pass/);
+    assert.deepEqual(session, originalSession);
   });
 
   it("fails closed when no active session exists", async () => {
