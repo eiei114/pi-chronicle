@@ -3,7 +3,7 @@ import type {
   ExtensionCommandContext,
 } from "@earendil-works/pi-coding-agent";
 import type { ChronicleSession } from "../lib/session.ts";
-import { writeChronicleSnapshot } from "../lib/chronicle-output.ts";
+import { chronicleFilePath, writeChronicleSnapshot } from "../lib/chronicle-output.ts";
 import { NO_ACTIVE_SESSION } from "../lib/session-messages.ts";
 
 export function registerChronicleEnd(
@@ -22,11 +22,22 @@ export function registerChronicleEnd(
 
       const closingNote = await ctx.ui.input("Closing note (optional):");
 
-      const result = writeChronicleSnapshot(session, {
-        endedAt: new Date(),
-        closingNote: closingNote?.trim() || undefined,
-        overwrite: true,
-      });
+      let result;
+      try {
+        result = writeChronicleSnapshot(session, {
+          endedAt: new Date(),
+          closingNote: closingNote?.trim() || undefined,
+          overwrite: true,
+        });
+      } catch {
+        ctx.ui.notify(
+          `Could not save the final Chronicle to ${chronicleFilePath(session)}. ` +
+            "Your session is still active. Check the vault path, write permissions, " +
+            "and free space, then retry /chronicle:end.",
+          "error",
+        );
+        return;
+      }
 
       setSession(undefined);
       ctx.ui.setStatus("chronicle", "");

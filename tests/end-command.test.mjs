@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { registerChronicleEnd } from "../extensions/chronicle-end.ts";
@@ -59,9 +59,12 @@ function getCommand(commands, name) {
 }
 
 describe("chronicle:end", () => {
-  it("writes the final chronicle, clears the session, and overwrites export", async () => {
+  it("writes the final chronicle, clears the session, and overwrites export", async (t) => {
     const progressDir = mkdtempSync(join(tmpdir(), "pi-chronicle-end-"));
+    t.after(() => rmSync(progressDir, { recursive: true, force: true }));
     const session = makeSession(progressDir);
+    const filePath = chronicleFilePath(session);
+    writeFileSync(filePath, "Existing export snapshot", "utf8");
     let activeSession = session;
     const { commands, pi } = createPiHarness();
     registerChronicleEnd(
@@ -75,9 +78,8 @@ describe("chronicle:end", () => {
 
     await getCommand(commands, "chronicle:end").handler("", context.ctx);
 
-    const filePath = chronicleFilePath(session);
-    assert.ok(existsSync(filePath));
     const content = readFileSync(filePath, "utf8");
+    assert.doesNotMatch(content, /Existing export snapshot/);
     assert.match(content, /## Closing/);
     assert.match(content, /初回リリース完了/);
     assert.equal(activeSession, undefined);
@@ -85,6 +87,51 @@ describe("chronicle:end", () => {
     assert.equal(context.notifications[0].level, "info");
     assert.match(context.notifications[0].message, /Chronicle saved:/);
     assert.deepEqual(context.statusUpdates, [{ key: "chronicle", value: "" }]);
+  });
+
+  it("reports a final-save failure and lets the same session retry", async (t) => {
+    const progressDir = mkdtempSync(join(tmpdir(), "pi-chronicle-end-"));
+    t.after(() => rmSync(progressDir, { recursive: true, force: true }));
+    const session = makeSession(progressDir, {
+      beats: [{ time: new Date(2026, 5, 5, 14, 50), type: "milestone", label: "Tests pass" }],
+    });
+    const originalSession = structuredClone(session);
+    const filePath = chronicleFilePath(session);
+    mkdirSync(filePath); // A directory at the target cannot be overwritten as a file.
+
+    let activeSession = session;
+    const sessionUpdates = [];
+    const { commands, pi } = createPiHarness();
+    registerChronicleEnd(pi, () => activeSession, (next) => {
+      sessionUpdates.push(next);
+      activeSession = next;
+    });
+    const command = getCommand(commands, "chronicle:end");
+    const { ctx, notifications, statusUpdates } = createContext("Final note");
+
+    await command.handler("", ctx);
+
+    assert.equal(notifications.length, 1);
+    assert.equal(notifications[0].level, "error");
+    assert.ok(notifications[0].message.includes(filePath));
+    assert.match(notifications[0].message, /retry \/chronicle:end/);
+    assert.equal(activeSession, session);
+    assert.deepEqual(session, originalSession);
+    assert.deepEqual(sessionUpdates, []);
+    assert.deepEqual(statusUpdates, []);
+
+    rmSync(filePath, { recursive: true });
+    await command.handler("", ctx);
+
+    const content = readFileSync(filePath, "utf8");
+    assert.match(content, /CI 緑/);
+    assert.match(content, /Tests pass/);
+    assert.match(content, /Final note/);
+    assert.deepEqual(notifications.slice(1), [
+      { message: `Chronicle saved: ${filePath}`, level: "info" },
+    ]);
+    assert.deepEqual(sessionUpdates, [undefined]);
+    assert.deepEqual(statusUpdates, [{ key: "chronicle", value: "" }]);
   });
 
   it("warns when no active session exists", async () => {
