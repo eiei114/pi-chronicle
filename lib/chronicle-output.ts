@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ChronicleSession } from "./session.ts";
 import { renderChronicle } from "./render-chronicle.ts";
@@ -29,15 +29,21 @@ export function writeChronicleSnapshot(
 
   ensureDir(session.project.progressDir);
 
-  if (!options.overwrite && existsSync(filePath)) {
-    return { ok: false, reason: "FILE_EXISTS", filePath };
-  }
-
   const md = renderChronicle(
     session,
     options.endedAt,
     options.closingNote,
   );
-  writeFileSync(filePath, md, "utf-8");
+  try {
+    writeFileSync(filePath, md, {
+      encoding: "utf-8",
+      flag: options.overwrite ? "w" : "wx",
+    });
+  } catch (err) {
+    if (!options.overwrite && (err as NodeJS.ErrnoException).code === "EEXIST") {
+      return { ok: false, reason: "FILE_EXISTS", filePath };
+    }
+    throw err;
+  }
   return { ok: true, filePath };
 }
